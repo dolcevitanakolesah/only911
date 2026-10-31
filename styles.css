@@ -101,7 +101,7 @@ button { cursor: pointer; }
 .shipping-icon { width: 43px; height: 43px; display: grid; place-items: center; border: 1px solid #b8bdb1; font-size: 21px; }
 .shipping-band h2 { font: 500 clamp(23px, 3vw, 34px)/1.2 Manrope, sans-serif; letter-spacing: -.045em; margin: 0; }
 .shipping-band .eyebrow { font-size: 8px; margin-bottom: 12px; }
-.shipping-band > p { font-size: 11px; line-height: 1.8; color: #6d7269; max-width: 260px; margin: 0; }
+.shipping-band > p { font-size: 15px; line-height: 1.6; color: #2f332d; max-width: 460px; margin: 0; }
 .site-footer { background: var(--dark); color: #d8dbd4; padding: 45px 7.3% 24px; }
 .footer-wordmark { color: white; }
 .site-footer > p { font-size: 10px; color: #8e958c; margin: 22px 0 36px; }
