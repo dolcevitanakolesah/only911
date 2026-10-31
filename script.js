@@ -97,7 +97,7 @@
       if (!Array.isArray(entries)) throw new Error("cars.json must contain an array of cars.");
       return entries.map((entry, index) => {
         const title = String(entry.title || `Porsche 911 ${index + 1}`);
-        const seriesMatch = title.match(/\b(930|964|993|996|997|991|992)\b/);
+        const seriesMatch = title.match(/\b(930|964|993)\b/);
         const photos = resolveCarImages(entry);
         const price = String(entry.price || "").trim();
         const mileage = String(entry.mileage || "").trim();
