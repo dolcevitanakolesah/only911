@@ -20,6 +20,25 @@
   },
 
 
+  {
+    "folder": "911-Green",
+    "prefix": "911-Green",
+    "imageAlt": "Porsche 911",
+    "title": "Рождение иконы: 1966 Porsche 911",
+    "year": "1973",
+    "mileage": "4,300 Km",
+    "displacement": "2341 cc",
+    "power": "190 HP",
+    "transmission": "5-speed manual",
+    "price": "112,000 €",
+    "history": "Produced on 5 August 1966, this 911 spent its first 25 years in Switzerland before arriving in Italy, where it has had just two owners over the past three decades.",
+    "description": [
+      "An iconic early 911, finished in a beautiful green. Equipped with the more powerful 2.4-litre air-cooled flat-six engine, delivering 190 HP compared to the original 2.0-litre generation.",
+      "    ",
+      "Combining timeless Porsche design, the distinctive Targa roof and an unmistakable six-cylinder soundtrack, this is a true classic from the golden age of sports cars. Located in sunny Italy, where cars stay healthy."
+    ]
+  },
+
   
   {
     "folder": "964-Emilia",
