@@ -590,13 +590,6 @@
     } else {
       $("#year") && ($("#year").textContent = new Date().getFullYear());
       initListing(cars);
-      const toggle = $(".menu-toggle");
-      toggle?.addEventListener("click", () => {
-        const nav = $(".header-nav");
-        const isOpen = nav.classList.toggle("open");
-        toggle.setAttribute("aria-expanded", String(isOpen));
-        toggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
-      });
     }
   }
   boot();
