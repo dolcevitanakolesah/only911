@@ -1,7 +1,7 @@
 {
   "_help": "quoteIntervalSeconds = seconds each quote stays. heroIntervalSeconds = seconds each hero image stays. heroTransitionSeconds = length of the fade between hero images. Each quote is a list of lines.",
-  "quoteIntervalSeconds": 8,
-  "heroIntervalSeconds": 10,
+  "quoteIntervalSeconds": 9,
+  "heroIntervalSeconds": 12,
   "heroTransitionSeconds": 2.2,
   "quotes": [
     
