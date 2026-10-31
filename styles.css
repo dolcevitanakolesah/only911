@@ -54,7 +54,8 @@ button { cursor: pointer; }
 .filter-chip { border: 1px solid transparent; background: transparent; color: #62675f; padding: 9px 12px; font-size: 10px; transition: all .2s; }
 .filter-chip:hover { border-color: #b8bcb2; color: var(--ink); }
 .filter-chip.active { background: var(--ink); color: white; }
-.filter-chip span { color: var(--accent); padding-left: 7px; }
+.filter-chip span { color: #8a8f86; padding-left: 7px; }
+.filter-chip.active span { color: var(--accent); }
 .search-box { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #aeb2a9; min-width: 155px; padding: 8px 0; color: #60665f; }
 .search-box > span { font-size: 20px; }
 .search-box input { min-width: 0; width: 125px; border: 0; outline: 0; background: transparent; font-size: 11px; color: var(--ink); }
@@ -237,3 +238,7 @@ body.lightbox-open { overflow: hidden; }
 
 /* While a car page is loading, show nothing instead of flashing the home page */
 html.is-detail body > * { display: none !important; }
+
+/* Green accent, used deliberately: lime text only on dark backgrounds; on light backgrounds only as fills/lines */
+.hero h1 em, .manifesto h2 em { color: var(--accent); }
+.hero-intro { border-left: 2px solid var(--accent); padding-left: 20px; }
