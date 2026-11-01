@@ -1,8 +1,8 @@
 /* 911 Archive — vanilla JS, no build step required.
-   Each car lives in assets/<folder>/card.txt; cars-order.txt lists the folders in display order. All asset paths are relative to this repository. */
+   Each car lives in assets/<folder>/card.txt; cars.txt lists the folders in display order. All asset paths are relative to this repository. */
 (() => {
   "use strict";
-  const ORDER_URL = "./cars-order.txt";
+  const ORDER_URL = "./cars.txt";
   const root = document.body;
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
@@ -100,7 +100,7 @@
   };
   const seriesName = series => (String(series || "").startsWith("911") ? `Porsche ${series}` : `Porsche 911 ${series || ""}`);
 
-  // ---- Car data: one card.txt per car + cars-order.txt (one folder name per line, in display order) ----
+  // ---- Car data: one card.txt per car + cars.txt (one folder name per line, in display order) ----
   // card.txt is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
   const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
     "history", "description", "imageAlt", "prefix", "vin", "service_book", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
@@ -131,7 +131,7 @@
   async function loadCars() {
     try {
       const orderResponse = await fetch(ORDER_URL);
-      if (!orderResponse.ok) throw new Error(`Could not load cars-order.txt (${orderResponse.status})`);
+      if (!orderResponse.ok) throw new Error(`Could not load cars.txt (${orderResponse.status})`);
       const folders = (await orderResponse.text()).split(/\r?\n/).map(line => line.trim().replace(/^\/+|\/+$/g, ""))
         .filter(line => line && !line.startsWith("#"));
       const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/card.txt`)
@@ -168,7 +168,7 @@
     } catch (error) {
       console.error("Unable to load car inventory:", error);
       const grid = $("#car-grid");
-      if (grid) grid.innerHTML = `<div class="load-error"><strong>Collection unavailable.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars-order.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
+      if (grid) grid.innerHTML = `<div class="load-error"><strong>Collection unavailable.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
       return [];
     }
   }
