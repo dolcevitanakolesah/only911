@@ -8,7 +8,7 @@ power: 210 HP
 transmission: 5-speed manual
 price: 87,000 €
 
-history: Built on December 1, 1973, and delivered new in Lucca on May 31, 1974, the car enjoyed a long Italian ownership history, passing through Reggio Emilia, Parma and Turin before arriving in Milan in 1984. One of its long-term owners was President of Porsche Club Italia. The current owner acquired the car in 2019, and it retains its original Milan registration. 
+history: Автомобиль был выпущен 1 декабря 1973 года и встретил своего владельца в Лукке 31 мая 1974-го. Затем была долгая итальянская биография: Реджо-Эмилия, Парма, Турин, а с 1984 года - Милан. Одним из его многолетних владельцев был президент Porsche Club Italia. Нынешний хозяин приобрел машину в 2019 году, и она по-прежнему сохраняет оригинальную миланскую регистрацию.
 
 description:
 1974 Carrera 2.7 - один из самых харизматичных экземпляров ранней серии G и прямой наследник легендарной 2.7 Carrera RS. Культовый 2,7-литровый оппозитный шестицилиндровый двигатель с механическим впрыском Bosch (MFI) дарит абсолютно неповторимые эмоции за рулём.
