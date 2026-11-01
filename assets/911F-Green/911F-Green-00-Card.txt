@@ -1,4 +1,4 @@
-title: Evergreen: 1973 Porsche 911 Targa
+title: EВечнозелёный и вечномолодой: 1973 Porsche 911 Targa
 imageAlt: Porsche 911
 series: 911-F
 year: 1973
@@ -11,6 +11,6 @@ price: 125,000 €
 history: Produced on 5 August 1966, this 911 spent its first 25 years in Switzerland before arriving in Italy, where it has had just two owners over the past three decades.
 
 description:
-An iconic early 911, finished in a beautiful green. Equipped with the more powerful 2.4-litre air-cooled flat-six engine, delivering 190 HP compared to the original 2.0-litre generation.
+Икона ранних 911 — в потрясающем зелёном исполнении. Оснащён более мощным 2,4-литровый оппозитным шестицилиндровым двигателем воздушного охлаждения: 190 л.с. против 2,0-литрового мотора первого поколения.
 
-Combining timeless Porsche design, the distinctive Targa roof and an unmistakable six-cylinder soundtrack, this is a true classic from the golden age of sports cars. Located in sunny Italy, where cars stay healthy.
+Вневременной дизайн Porsche, узнаваемая крыша Targa и ни с чем не сравнимый звук шести цилиндров - настоящая классика золотой эпохи спортивных автомобилей. Автомобиль находится в солнечной Италии, где машины живут долго и не болеют.
