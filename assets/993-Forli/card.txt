@@ -1,0 +1,16 @@
+title: Вечная классика: 1995 Porsche 993
+series: 993
+year: 1995
+mileage: 135,000 km
+displacement: 3600 cc
+power: 272 hp
+transmission: 6-speed manual
+price: 95,000 €
+imageAlt: Porsche 993
+
+history:
+
+description:
+A stunning Porsche 993 Carrera Coupé in excellent condition, finished in elegant black with a black leather interior. First registered in June 1995, it features a 3.6-litre six-cylinder engine producing 272 hp, paired with a 6-speed manual gearbox and rear-wheel drive.
+
+With 135,000 km, this iconic air-cooled 911 combines timeless design, pure driving pleasure, and outstanding collectible appeal.
