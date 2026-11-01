@@ -89,6 +89,17 @@
   }
 
 
+  // Generation from the model year when the title has no 964/993: F-model 1965-1973, G-model 1974-1989 (Porsche Classic).
+  // A car can override this with an optional "series" field in cars.json.
+  const seriesFromYear = value => {
+    const year = parseInt(value, 10);
+    if (!year) return "911";
+    if (year <= 1973) return "911-F";
+    if (year <= 1989) return "911-G";
+    return "911";
+  };
+  const seriesName = series => (String(series || "").startsWith("911") ? `Porsche ${series}` : `Porsche 911 ${series || ""}`);
+
   async function loadCars() {
     try {
       const response = await fetch(DATA_URL);
@@ -97,7 +108,7 @@
       if (!Array.isArray(entries)) throw new Error("cars.json must contain an array of cars.");
       return entries.map((entry, index) => {
         const title = String(entry.title || `Porsche 911 ${index + 1}`);
-        const seriesMatch = title.match(/\b(930|964|993)\b/);
+        const seriesMatch = title.match(/\b(964|993)\b/);
         const photos = resolveCarImages(entry);
         const price = String(entry.price || "").trim();
         const mileage = String(entry.mileage || "").trim();
@@ -107,7 +118,7 @@
         return {
           ...entry,
           id: String(entry.folder || entry.prefix || `car-${index + 1}`),
-          series: seriesMatch ? seriesMatch[1] : "911",
+          series: entry.series || (seriesMatch ? seriesMatch[1] : seriesFromYear(entry.year)),
           year: entry.year || (title.match(/\b(?:19|20)\d{2}\b/) || [])[0] || "",
           currency: "EUR",
           price_display: price || "Price on request",
@@ -155,7 +166,7 @@
   function renderCard(car) {
     const coverStem = car.gallery && car.gallery[0] ? car.gallery[0].stem : "";
     const img = coverStem ? imagePath(variant(coverStem, 600)) : "";
-    const title = car.title || `Porsche 911 ${car.series || ""}`;
+    const title = car.title || seriesName(car.series);
     const year = car.year || "Year not specified";
     const alt = car.cover_alt || `${title} exterior`;
     return `<article class="car-card">
@@ -209,7 +220,7 @@
 
   function detailTemplate(car) {
     const gallery = safeArray(car.gallery);
-    const title = car.title || `Porsche 911 ${car.series || ""}`;
+    const title = car.title || seriesName(car.series);
     const facts = [
       ["Model year", car.year || "Not specified"], ["Generation", car.series || "911"],
       ["Mileage", formatMileage(car)], ["Displacement", car.displacement || "Not specified"],
@@ -243,7 +254,7 @@
     return `<div class="detail-page">
       <div class="detail-topbar"><a class="wordmark" href="./index.html"><span class="wordmark-mark">911</span><span class="wordmark-copy">НАСЛЕДИЕ</span></a><a class="back-link" href="./index.html"><span>←</span> Back to collection</a></div>
       <main class="detail-container">
-        <p class="detail-kicker">${escapeHTML(car.year || "")} &nbsp; / &nbsp; Porsche 911 ${escapeHTML(car.series || "")}</p>
+        <p class="detail-kicker">${escapeHTML(car.year || "")} &nbsp; / &nbsp; ${escapeHTML(seriesName(car.series))}</p>
         <div class="detail-title-row"><h1>${escapeHTML(title)}<span>.</span></h1><div class="detail-price">${escapeHTML(formatPrice(car))}</div></div>
         ${galleryMarkup}
         <section class="detail-overview"><div><h2>A closer look</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div>
