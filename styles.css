@@ -80,7 +80,8 @@ button { cursor: pointer; }
 .card-specs { display: flex; align-items: center; gap: 9px; color: #70756d; font-size: 10px; }
 .card-specs .dot { width: 3px; height: 3px; border-radius: 50%; background: #a2a69d; }
 .card-price-row { margin-top: 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.card-price-row .card-specs { flex-wrap: wrap; justify-content: flex-end; row-gap: 2px; text-align: right; }
+.card-price-row .card-specs { flex-wrap: wrap; row-gap: 2px; }
+.card-price-row .card-price { margin-left: auto; white-space: nowrap; }
 .card-price { font-size: 16px; font-weight: 600; letter-spacing: -.03em; }
 .card-detail-link { font-size: 10px; color: #646a61; }
 .collection-footnote { color: #898e85; font-size: 9px; margin: 44px 0 0; }
