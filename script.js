@@ -1,5 +1,5 @@
 /* 911 Archive — vanilla JS, no build step required.
-   Each car lives in assets/<folder>/card.txt; cars.txt lists the folders in display order. All asset paths are relative to this repository. */
+   Each car lives in assets/<folder>/<folder>-00-Card.txt; cars.txt lists the folders in display order. All asset paths are relative to this repository. */
 (() => {
   "use strict";
   const ORDER_URL = "./cars.txt";
@@ -65,7 +65,7 @@
     const items = [];
 
     // Photos: probe 50 tiny thumbnails IN PARALLEL (one round trip, not one per photo) and keep the first unbroken run.
-    // Add or delete photos in the folder and the gallery updates itself; nothing to edit in card.txt.
+    // Add or delete photos in the folder and the gallery updates itself; nothing to edit in the card file.
     const hits = await Promise.all(Array.from({ length: 50 }, (_, i) => probeThumb(`${dir}-${label(i + 1)}`)));
     const photoCount = hits.indexOf(false) === -1 ? hits.length : hits.indexOf(false);
     for (let number = 1; number <= photoCount; number++) {
@@ -90,7 +90,7 @@
 
 
   // Generation from the model year when the title has no 964/993: F-model 1965-1973, G-model 1974-1989 (Porsche Classic).
-  // A car can override this with a "series:" line in its card.txt.
+  // A car can override this with a "series:" line in its card file.
   const seriesFromYear = value => {
     const year = parseInt(value, 10);
     if (!year) return "911";
@@ -100,8 +100,8 @@
   };
   const seriesName = series => (String(series || "").startsWith("911") ? `Porsche ${series}` : `Porsche 911 ${series || ""}`);
 
-  // ---- Car data: one card.txt per car + cars.txt (one folder name per line, in display order) ----
-  // card.txt is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
+  // ---- Car data: one <folder>-00-Card.txt per car + cars.txt (one folder name per line, in display order) ----
+  // The card file is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
   const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
     "history", "description", "imageAlt", "prefix", "vin", "service_book", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
   const MULTILINE_FIELDS = new Set(["history", "description"]);
@@ -134,11 +134,11 @@
       if (!orderResponse.ok) throw new Error(`Could not load cars.txt (${orderResponse.status})`);
       const folders = (await orderResponse.text()).split(/\r?\n/).map(line => line.trim().replace(/^\/+|\/+$/g, ""))
         .filter(line => line && !line.startsWith("#"));
-      const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/card.txt`)
+      const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/${folder}-00-Card.txt`)
         .then(response => (response.ok ? response.text() : null)).catch(() => null)));
       const entries = [];
       folders.forEach((folder, i) => {
-        if (texts[i] === null) console.warn(`No card.txt found in assets/${folder}/ - car skipped.`);
+        if (texts[i] === null) console.warn(`No ${folder}-00-Card.txt found in assets/${folder}/ - car skipped.`);
         else entries.push(parseCarText(texts[i], folder));
       });
       return entries.map((entry, index) => {
