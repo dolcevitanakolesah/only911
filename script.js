@@ -1,8 +1,8 @@
 /* 911 Archive — vanilla JS, no build step required.
-   Edit cars.json to manage inventory. All asset paths are relative to this repository. */
+   Each car lives in assets/<folder>/car.txt; cars-order.txt lists the folders in display order. All asset paths are relative to this repository. */
 (() => {
   "use strict";
-  const DATA_URL = "./cars.json";
+  const ORDER_URL = "./cars-order.txt";
   const root = document.body;
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
@@ -65,7 +65,7 @@
     const items = [];
 
     // Photos: probe 50 tiny thumbnails IN PARALLEL (one round trip, not one per photo) and keep the first unbroken run.
-    // Add or delete photos in the folder and the gallery updates itself; nothing to edit in cars.json.
+    // Add or delete photos in the folder and the gallery updates itself; nothing to edit in car.txt.
     const hits = await Promise.all(Array.from({ length: 50 }, (_, i) => probeThumb(`${dir}-${label(i + 1)}`)));
     const photoCount = hits.indexOf(false) === -1 ? hits.length : hits.indexOf(false);
     for (let number = 1; number <= photoCount; number++) {
@@ -90,7 +90,7 @@
 
 
   // Generation from the model year when the title has no 964/993: F-model 1965-1973, G-model 1974-1989 (Porsche Classic).
-  // A car can override this with an optional "series" field in cars.json.
+  // A car can override this with a "series:" line in its car.txt.
   const seriesFromYear = value => {
     const year = parseInt(value, 10);
     if (!year) return "911";
@@ -100,12 +100,47 @@
   };
   const seriesName = series => (String(series || "").startsWith("911") ? `Porsche ${series}` : `Porsche 911 ${series || ""}`);
 
+  // ---- Car data: one car.txt per car + cars-order.txt (one folder name per line, in display order) ----
+  // car.txt is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
+  const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
+    "history", "description", "imageAlt", "prefix", "vin", "service_book", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
+  const MULTILINE_FIELDS = new Set(["history", "description"]);
+  function parseCarText(text, folder) {
+    const entry = { folder, prefix: folder };
+    let key = null;
+    let buffer = [];
+    const flush = () => {
+      if (!key) return;
+      entry[key] = MULTILINE_FIELDS.has(key)
+        ? buffer.join("\n").split(/\n\s*\n/).map(part => part.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean)
+        : buffer.join(" ").trim();
+    };
+    String(text).replace(/^\uFEFF/, "").split(/\r?\n/).forEach(line => {
+      const match = line.match(/^\s*([A-Za-z_]+)\s*:\s?(.*)$/);
+      if (match && CAR_FIELDS[match[1].toLowerCase()]) {
+        flush();
+        key = CAR_FIELDS[match[1].toLowerCase()];
+        buffer = [match[2]];
+      } else if (key) buffer.push(line);
+    });
+    flush();
+    if (!entry.prefix) entry.prefix = folder;
+    return entry;
+  }
+
   async function loadCars() {
     try {
-      const response = await fetch(DATA_URL);
-      if (!response.ok) throw new Error(`Could not load cars.json (${response.status})`);
-      const entries = await response.json();
-      if (!Array.isArray(entries)) throw new Error("cars.json must contain an array of cars.");
+      const orderResponse = await fetch(ORDER_URL);
+      if (!orderResponse.ok) throw new Error(`Could not load cars-order.txt (${orderResponse.status})`);
+      const folders = (await orderResponse.text()).split(/\r?\n/).map(line => line.trim().replace(/^\/+|\/+$/g, ""))
+        .filter(line => line && !line.startsWith("#"));
+      const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/car.txt`)
+        .then(response => (response.ok ? response.text() : null)).catch(() => null)));
+      const entries = [];
+      folders.forEach((folder, i) => {
+        if (texts[i] === null) console.warn(`No car.txt found in assets/${folder}/ - car skipped.`);
+        else entries.push(parseCarText(texts[i], folder));
+      });
       return entries.map((entry, index) => {
         const title = String(entry.title || `Porsche 911 ${index + 1}`);
         const seriesMatch = title.match(/\b(964|993)\b/);
@@ -133,7 +168,7 @@
     } catch (error) {
       console.error("Unable to load car inventory:", error);
       const grid = $("#car-grid");
-      if (grid) grid.innerHTML = `<div class="load-error"><strong>Collection unavailable.</strong><p>${escapeHTML(error.message || "Unable to load cars.json.")} Check that cars.json is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
+      if (grid) grid.innerHTML = `<div class="load-error"><strong>Collection unavailable.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars-order.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
       return [];
     }
   }
