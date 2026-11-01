@@ -211,10 +211,10 @@
           <span class="card-arrow" aria-hidden="true">↗</span>
         </div>
         <div class="car-card-meta">
+          <div class="card-price-row"><span class="card-price">${escapeHTML(formatPrice(car))}</span><span class="card-detail-link">View car ↗</span></div>
           <div class="card-overline"><span>${escapeHTML(year)}</span><span class="generation">${escapeHTML(car.series || "911")}</span></div>
           <h3>${escapeHTML(title)}</h3>
           <div class="card-specs"><span>${escapeHTML(formatMileage(car))}</span><span class="dot"></span><span>${escapeHTML(car.transmission || "Not specified")}</span></div>
-          <div class="card-price-row"><span class="card-price">${escapeHTML(formatPrice(car))}</span><span class="card-detail-link">View car ↗</span></div>
         </div>
       </a>
     </article>`;
