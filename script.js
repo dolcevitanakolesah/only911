@@ -300,7 +300,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
         <p class="detail-kicker">${escapeHTML(car.year || "")} &nbsp; / &nbsp; ${escapeHTML(seriesName(car.series))}</p>
         <div class="detail-title-row"><h1>${escapeHTML(title)}<span>.</span></h1><div class="detail-price">${escapeHTML(formatPrice(car))}</div></div>
         ${galleryMarkup}
-        <section class="detail-overview"><div><h2>A closer look</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div>
+        <section class="detail-overview"><div><h2>Описание</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div>
           <div class="detail-facts">${facts.map(([label,value])=>`<div class="fact"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`).join("")}</div>
         </section>
         ${historySection}
