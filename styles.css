@@ -14,7 +14,7 @@ button { cursor: pointer; }
 .wordmark { display: inline-flex; gap: 11px; align-items: center; letter-spacing: .13em; }
 .wordmark-mark { font-family: Manrope, sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -.1em; border-right: 1px solid #626761; padding-right: 13px; }
 .wordmark-copy { font-size: 11px; font-weight: 700; line-height: 1.2; }
-.wordmark-copy svg { display: block; }
+.wordmark-car { display: block; width: 64px; height: 20.4px; background: currentColor; -webkit-mask: url("./assets/Home/Silhouette.webp") center / contain no-repeat; mask: url("./assets/Home/Silhouette.webp") center / contain no-repeat; }
 .wordmark-copy span { display: block; margin-top: 5px; font-size: 8px; font-weight: 500; letter-spacing: .21em; color: #9ea39d; }
 .header-nav { display: flex; align-items: center; gap: 36px; font-size: 12px; color: #d6d9d2; }
 .header-nav a { transition: color .2s; }
