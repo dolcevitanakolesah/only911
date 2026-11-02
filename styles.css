@@ -110,8 +110,6 @@ button { cursor: pointer; }
 .site-footer > p { font-size: 10px; color: #8e958c; margin: 22px 0 36px; }
 .footer-bottom { border-top: 1px solid #343a34; padding-top: 19px; display: flex; justify-content: space-between; gap: 20px; color: #8e958c; font-size: 9px; }
 .footer-bottom a { color: #e6e9e1; }
-.footer-bottom { align-items: center; }
-.footer-bottom .nav-telegram { align-self: center; }
 .toast { position: fixed; z-index: 10; bottom: 20px; left: 50%; transform: translate(-50%, 20px); background: #202620; color: white; padding: 13px 18px; font-size: 11px; opacity: 0; pointer-events: none; transition: all .25s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
