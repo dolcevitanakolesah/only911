@@ -1,4 +1,4 @@
-title: Жизнь в розовом цвете: 1991 Porsche 964 Cabriolet
+title: Жизнь в розовом цвете: 1991 Porsche 964
 imageAlt: Porsche 964
 series: 964
 year: 1991
