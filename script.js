@@ -260,9 +260,9 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     const gallery = safeArray(car.gallery);
     const title = car.title || seriesName(car.series);
     const facts = [
-      ["Model year", car.year || "Not specified"], ["Generation", car.series || "911"],
-      ["Mileage", formatMileage(car)], ["Displacement", car.displacement || "Not specified"],
-      ["Power", car.power || "Not specified"], ["Transmission", car.transmission || "Not specified"]
+      ["Год", car.year || "Not specified"], ["Поколение", car.series || "911"],
+      ["Пробег", formatMileage(car)], ["Объём двигателя", car.displacement || "Not specified"],
+      ["Мощность", car.power || "Not specified"], ["Трансмиссия", car.transmission || "Not specified"]
     ];
     const usableGallery = gallery.length ? gallery : safeArray(car.gallery);
     const galleryMarkup = usableGallery.length ? `
