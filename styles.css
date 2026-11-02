@@ -130,6 +130,11 @@ button { cursor: pointer; }
 .gallery-main { display: block; position: relative; width: 100%; aspect-ratio: 3 / 2; padding: 0; border: 0; overflow: hidden; background: #ddd; cursor: zoom-in; }
 .gallery-main img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .gallery-main .gallery-photo-zoom { opacity: 1; }
+.gallery-stage { position: relative; }
+.stage-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 58px; border: 0; background: rgba(16,19,17,.45); color: #fff; font-size: 34px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0 0 4px; }
+.stage-nav:hover { background: rgba(16,19,17,.7); }
+.stage-prev { left: 0; }
+.stage-next { right: 0; }
 .gallery-grid { position: relative; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; width: min(100%, calc(72vh * 1.5)); margin: 0 auto; }
 .gallery-grid .gallery-photo { flex: 0 0 120px; width: 120px; opacity: .6; transition: opacity .2s; }
 .gallery-grid .gallery-photo:hover, .gallery-grid .gallery-photo.is-active { opacity: 1; }
@@ -243,11 +248,9 @@ body.lightbox-open { overflow: hidden; }
 /* Skip rendering work for below-the-fold sections until they approach the viewport */
 .manifesto, .shipping-band, .site-footer { content-visibility: auto; contain-intrinsic-size: auto 500px; }
 
-/* Touch screens (phones/tablets): full-screen photos are swiped, so drop the side arrows and give the photo the full width. */
-@media (hover: none) and (pointer: coarse) {
-  .lightbox-nav { display: none; }
-  .gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; padding-left: 0; padding-right: 0; }
-}
+/* Full screen: no side arrows on any device. Swipe on touch screens; keyboard arrows still work on computers. */
+.lightbox-nav { display: none !important; }
+.gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 
 /* While a car page is loading, show nothing instead of flashing the home page */
 html.is-detail body > * { display: none !important; }
