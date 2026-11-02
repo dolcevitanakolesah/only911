@@ -265,15 +265,12 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       ["Мощность", car.power || "Not specified"], ["Трансмиссия", car.transmission || "Not specified"]
     ];
     const usableGallery = gallery.length ? gallery : safeArray(car.gallery);
-    const firstIndex = usableGallery.findIndex(photo => photo.type !== "video");
-    const firstPhoto = firstIndex >= 0 ? usableGallery[firstIndex] : null;
     const galleryMarkup = usableGallery.length ? `
-      ${firstPhoto ? `<div class="gallery-stage"><button class="gallery-main" type="button" aria-label="Open full-screen gallery"><img id="gallery-main-img" src="${escapeHTML(imagePath(variant(firstPhoto.stem, 1200)))}" srcset="${escapeHTML(srcsetOf(firstPhoto.stem, [1200, 1920]))}" sizes="(max-width: 1000px) 100vw, 1100px" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(firstPhoto.alt || title)}" fetchpriority="high" decoding="async"><span class="gallery-photo-zoom" aria-hidden="true">↗</span></button></div>` : ""}
       <div class="gallery-grid" aria-label="Photographs of ${escapeHTML(title)}">
-        ${usableGallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}${i === firstIndex ? " is-active" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="${photo.type === "video" ? "Play video" : "Show photo"} ${i + 1}">
+        ${usableGallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="Open ${photo.type === "video" ? "video" : "photo"} ${i + 1}">
           ${photo.type === "video"
             ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} video ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="gallery-photo-zoom" aria-hidden="true">▶</span>`
-            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="(max-width: 700px) 84px, 120px" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 3 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async"><span class="gallery-photo-zoom" aria-hidden="true">↗</span>`}
+            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 3 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async"><span class="gallery-photo-zoom" aria-hidden="true">↗</span>`}
         </button>`).join("")}
       </div>
       <div class="gallery-empty" hidden>No photographs found. Check the car's image filenames and folder.</div>
@@ -456,37 +453,16 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       $(".lightbox-prev", lightbox).disabled = photos.length < 2;
       $(".lightbox-next", lightbox).disabled = photos.length < 2;
     };
-    const stageButton = $(".gallery-main", root);
-    const stageImage = $("#gallery-main-img", root);
-    const strip = $(".gallery-grid", root);
-    const selectPhoto = button => {
-      if (!button || button.dataset.type === "video" || !stageImage) return;
-      const stem = button.dataset.stem;
-      stageImage.src = imagePath(variant(stem, 1200));
-      stageImage.srcset = srcsetOf(stem, [1200, 1920]);
-      stageImage.alt = (button.querySelector("img") || {}).alt || "";
-      $$(".gallery-photo", root).forEach(item => item.classList.toggle("is-active", item === button));
-      if (strip) strip.scrollTo({ left: button.offsetLeft - (strip.clientWidth - button.clientWidth) / 2, behavior: "smooth" });
-    };
-    const openLightboxAt = index => {
+    const closeLightbox = () => { clearMotion(); swipeBusy = false; lightboxVideo.pause(); lightboxVideoSource.removeAttribute("src"); lightboxVideo.load(); lightbox.hidden = true; document.body.classList.remove("lightbox-open"); };
+    $$(".gallery-photo", root).forEach(button => button.addEventListener("click", () => {
+      const photos = visiblePhotos();
+      const clicked = photos.indexOf(button);
+      if (clicked < 0) return;
       lightbox.hidden = false;
       document.body.classList.add("lightbox-open");
-      showPhoto(index);
+      showPhoto(clicked);
       $(".lightbox-close", lightbox).focus();
-    };
-    const closeLightbox = () => { clearMotion(); swipeBusy = false; lightboxVideo.pause(); lightboxVideoSource.removeAttribute("src"); lightboxVideo.load(); lightbox.hidden = true; document.body.classList.remove("lightbox-open"); selectPhoto(visiblePhotos()[activePhoto]); };
-    // Thumbnail: show it in the large frame (videos open the full-screen viewer). Large photo: open full screen.
-    $$(".gallery-photo", root).forEach(button => button.addEventListener("click", () => {
-      if (button.dataset.type === "video") {
-        const clicked = visiblePhotos().indexOf(button);
-        if (clicked >= 0) openLightboxAt(clicked);
-      } else selectPhoto(button);
     }));
-    stageButton?.addEventListener("click", () => {
-      const photos = visiblePhotos();
-      const index = photos.indexOf($(".gallery-photo.is-active", root));
-      openLightboxAt(index >= 0 ? index : 0);
-    });
     $(".lightbox-close", lightbox)?.addEventListener("click", closeLightbox);
     $(".lightbox-prev", lightbox)?.addEventListener("click", () => showPhoto(activePhoto - 1, -1));
     $(".lightbox-next", lightbox)?.addEventListener("click", () => showPhoto(activePhoto + 1, 1));
