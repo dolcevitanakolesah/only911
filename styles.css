@@ -84,7 +84,6 @@ button { cursor: pointer; }
 .card-price-row .card-specs { flex-wrap: wrap; justify-content: flex-end; row-gap: 2px; text-align: right; }
 .card-price { font-size: 16px; font-weight: 600; letter-spacing: -.03em; }
 .card-detail-link { font-size: 10px; color: #646a61; }
-.collection-footnote { color: #898e85; font-size: 9px; margin: 44px 0 0; }
 .empty-state { text-align: center; padding: 75px 20px; }
 .empty-state h3 { font: 500 28px Manrope, sans-serif; margin: 0 0 10px; }
 .empty-state p:not(.eyebrow) { color: #73786f; font-size: 12px; }
