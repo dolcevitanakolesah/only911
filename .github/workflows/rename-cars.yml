@@ -1,1 +1,43 @@
+name: Rename cars
 
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (only list the changes, do not commit)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run rename script
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python scripts/rename_cars.py --dry-run
+          else
+            python scripts/rename_cars.py
+          fi
+
+      - name: Commit and push
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "Rename cars to series-colour-place convention"
+            git push
+          fi
