@@ -130,8 +130,8 @@ button { cursor: pointer; }
 .gallery-photo[hidden] { display: none !important; }
 .gallery-photo img { display: block; background: #ddd; width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
 .gallery-photo:hover img { transform: scale(1.035); }
-.gallery-photo-zoom { position: absolute; right: 10px; bottom: 10px; display: grid; place-items: center; width: 30px; height: 30px; background: rgba(16,19,17,.78); color: #fff; font-size: 16px; opacity: 0; transition: opacity .2s; }
-.gallery-photo:hover .gallery-photo-zoom, .gallery-photo:focus-visible .gallery-photo-zoom { opacity: 1; }
+.gallery-photo-zoom { position: absolute; right: 13px; bottom: 13px; display: grid; place-items: center; width: 34px; height: 34px; background: var(--accent); color: var(--ink); font-size: 17px; transform: translateY(4px); opacity: 0; transition: all .2s; }
+.gallery-photo:hover .gallery-photo-zoom, .gallery-photo:focus-visible .gallery-photo-zoom { opacity: 1; transform: translateY(0); }
 .gallery-empty { background: linear-gradient(135deg,#d8d9d2,#bfc2b8); display: grid; place-items: center; color: #73786f; min-height: 180px; padding: 24px; text-align: center; }
 .gallery-empty[hidden] { display: none !important; }
 .gallery-lightbox[hidden] { display: none !important; }
