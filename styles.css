@@ -169,6 +169,7 @@ body.lightbox-open { overflow: hidden; }
 .detail-cta { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding: 35px; margin-top: 55px; background: #e7e8e0; }
 .detail-cta h2 { font: 500 24px Manrope, sans-serif; margin: 0 0 8px; letter-spacing: -.04em; }
 .detail-cta p { font-size: 11px; color: #6e746a; margin: 0; }
+.detail-cta a:hover { text-decoration: underline; }
 .detail-not-found { padding: 100px 7%; text-align: center; }
 .detail-not-found h1 { font: 500 40px Manrope, sans-serif; }
 @media (max-width: 1000px) {
