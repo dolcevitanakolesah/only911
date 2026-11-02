@@ -237,7 +237,12 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       });
       grid.innerHTML = filtered.map(renderCard).join("");
       attachImageFallbacks(grid);
-      $("#results-count").textContent = `${filtered.length} ${filtered.length === 1 ? "car" : "cars"} shown`;
+      $("#results-count").textContent = (n => {
+        const m10 = n % 10, m100 = n % 100;
+        if (m10 === 1 && m100 !== 11) return `${n} машина найдена`;
+        if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return `${n} машины найдено`;
+        return `${n} машин найдено`;
+      })(filtered.length);
       $("#all-count").textContent = cars.length;
       $("#empty-state").hidden = filtered.length !== 0;
       grid.hidden = filtered.length === 0;
