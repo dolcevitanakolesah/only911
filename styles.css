@@ -230,3 +230,9 @@ html.is-detail body > * { display: none !important; }
 .hero h1 em, .manifesto h2 em { color: var(--accent); }
 .hero-intro { border-left: 2px solid var(--accent); padding-left: 20px; }
 .empty-state p a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Price scope notes */
+.status-line { flex-wrap: wrap; gap: 4px 20px; }
+.price-note { color: #73786f; }
+.detail-price-note { display: block; max-width: 260px; margin: 6px 0 0 auto; font-size: 11px; font-weight: 400; line-height: 1.45; color: #73786f; white-space: normal; }
+@media (max-width: 700px) { .detail-price-note { margin-left: 0; } }
