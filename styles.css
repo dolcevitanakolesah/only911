@@ -101,7 +101,7 @@ button { cursor: pointer; }
 .detail-container { max-width: 1450px; margin: 0 auto; padding: 48px 7.3% 100px; }
 .detail-kicker { color: #65705a; font-size: 10px; text-transform: uppercase; letter-spacing: .17em; margin: 0 0 15px; }
 .detail-title-row { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 30px; }
-.detail-title-row h1 { font: 500 clamp(36px, 5.5vw, 66px)/1.05 Manrope, sans-serif; letter-spacing: -.065em; margin: 0; }
+.detail-title-row h1 { font: 500 clamp(26px, 3.4vw, 44px)/1.1 Manrope, sans-serif; letter-spacing: -.065em; margin: 0; }
 .detail-title-row h1 span { color: #819b31; }
 .detail-price { text-align: right; white-space: nowrap; font-size: 24px; font-weight: 600; }
 .viewer { width: min(100%, 93vh); }
