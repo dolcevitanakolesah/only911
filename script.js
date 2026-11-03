@@ -317,10 +317,11 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       <main class="detail-container">
         <p class="detail-kicker">${escapeHTML(car.year || "")} &nbsp; / &nbsp; ${escapeHTML(seriesName(car.series))}</p>
         <div class="detail-title-row"><h1>${escapeHTML(title)}<span>.</span></h1><div class="detail-price">${escapeHTML(formatPrice(car))}</div></div>
-        ${galleryMarkup}
-        <section class="detail-overview"><div><h2>Описание</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div>
+        <div class="detail-hero">
+          <div class="detail-gallery">${galleryMarkup}</div>
           <div class="detail-facts">${facts.map(([label,value])=>`<div class="fact"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`).join("")}</div>
-        </section>
+        </div>
+        <section class="detail-overview"><div><h2>Описание</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div></section>
         ${historySection}
         <section class="detail-cta"><div><h2><a href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener">Interested in this 911?</a></h2><p><a href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener">Request the full vehicle file, additional photographs or a delivery quote.</a></p></div></section>
       </main>
