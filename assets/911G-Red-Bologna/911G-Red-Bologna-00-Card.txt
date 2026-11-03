@@ -3,7 +3,7 @@ imageAlt: Porsche 911
 series: 911-G
 year: 1989
 mileage: 110,800 Km
-displacement: 3299 cc cc
+displacement: 3299 cc
 power: 282 HP
 transmission: 5-speed manual
 price: 145,000 €
