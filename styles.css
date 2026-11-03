@@ -104,6 +104,7 @@ button { cursor: pointer; }
 .detail-title-row h1 { font: 500 clamp(36px, 5.5vw, 66px)/1.05 Manrope, sans-serif; letter-spacing: -.065em; margin: 0; }
 .detail-title-row h1 span { color: #819b31; }
 .detail-price { text-align: right; white-space: nowrap; font-size: 24px; font-weight: 600; }
+.viewer { width: min(100%, 93vh); margin: 0 auto; }
 .viewer-stage { position: relative; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; width: 100%; aspect-ratio: 3 / 2; max-height: 62vh; overflow: hidden; background: #141714; touch-action: pan-y; }
 .viewer-stage img, .viewer-stage video { grid-area: 1 / 1; display: block; width: 100%; height: 100%; object-fit: contain; background: #141714; }
 .viewer-stage img { cursor: zoom-in; }
@@ -196,6 +197,7 @@ body.lightbox-open { overflow: hidden; }
   .detail-title-row { display: block; }
   .detail-price { text-align: left; margin-top: 20px; }
   .viewer-stage { max-height: 62vh; }
+  .viewer-nav { width: 38px; height: 54px; font-size: 28px; }
   .gallery-photo { flex-basis: 84px; }
   .gallery-empty { min-height: 100px; }
   .gallery-lightbox { grid-template-columns: 42px minmax(0, 1fr) 42px; padding: 54px 6px 22px; }
@@ -215,7 +217,7 @@ body.lightbox-open { overflow: hidden; }
 
 /* Touch screens (phones/tablets): full-screen photos are swiped, so drop the side arrows and give the photo the full width. */
 @media (hover: none) and (pointer: coarse) {
-  .lightbox-nav, .viewer-nav { display: none; }
+  .lightbox-nav { display: none; }
   .gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; padding-left: 0; padding-right: 0; }
 }
 
