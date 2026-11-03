@@ -154,7 +154,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   async function loadCars() {
     try {
       const orderResponse = await fetch(ORDER_URL);
-      if (!orderResponse.ok) throw new Error(`Could not load cars.txt (${orderResponse.status})`);
+      if (!orderResponse.ok) throw new Error(`Не удалось загрузить cars.txt (${orderResponse.status})`);
       const folders = (await orderResponse.text()).split(/\r?\n/).map(line => line.trim().replace(/^\/+|\/+$/g, ""))
         .filter(line => line && !line.startsWith("#"));
       const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/${folder}-00-Card.txt`)
@@ -188,7 +188,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     } catch (error) {
       console.error("Unable to load car inventory:", error);
       const grid = $("#car-grid");
-      if (grid) grid.innerHTML = `<div class="load-error"><strong>Коллекция недоступна.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
+      if (grid) grid.innerHTML = `<div class="load-error"><strong>Коллекция недоступна.</strong><p>${escapeHTML(error.message || "Не удалось загрузить список автомобилей.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
       return [];
     }
   }
