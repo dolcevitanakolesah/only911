@@ -5,6 +5,13 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
   "use strict";
   const ORDER_URL = "./cars.txt";
   const root = document.body;
+  // Touch detection for the full-screen gallery (swipe only, no arrows). The CSS media query (hover: none) and (pointer: coarse)
+  // is not reliable everywhere (Samsung Internet reports it wrongly), so also check touch points + a phone/tablet-sized screen,
+  // and switch to touch mode the moment a finger actually touches the page.
+  const markTouch = () => document.documentElement.classList.add("is-touch");
+  if (window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
+      (navigator.maxTouchPoints > 0 && Math.min(screen.width, screen.height) <= 820)) markTouch();
+  window.addEventListener("touchstart", markTouch, { once: true, passive: true });
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
   const escapeHTML = (value = "") => String(value).replace(/[&<>"']/g, ch => ({

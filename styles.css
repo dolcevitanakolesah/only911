@@ -219,11 +219,9 @@ body.lightbox-open { overflow: hidden; }
 /* Skip rendering work for below-the-fold sections until they approach the viewport */
 .manifesto, .shipping-band, .site-footer { content-visibility: auto; contain-intrinsic-size: auto 500px; }
 
-/* Touch screens (phones/tablets): full-screen photos are swiped, so drop the side arrows and give the photo the full width. */
-@media (hover: none) and (pointer: coarse) {
-  .lightbox-nav { display: none; }
-  .gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; padding-left: 0; padding-right: 0; }
-}
+/* Touch screens (phones/tablets; the is-touch class is set in script.js): full-screen photos are swiped, so drop the side arrows and give the photo the full width. */
+html.is-touch .lightbox-nav { display: none; }
+html.is-touch .gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; padding-left: 0; padding-right: 0; }
 
 /* While a car page is loading, show nothing instead of flashing the home page */
 html.is-detail body > * { display: none !important; }
