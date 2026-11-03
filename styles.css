@@ -104,13 +104,24 @@ button { cursor: pointer; }
 .detail-title-row h1 { font: 500 clamp(36px, 5.5vw, 66px)/1.05 Manrope, sans-serif; letter-spacing: -.065em; margin: 0; }
 .detail-title-row h1 span { color: #819b31; }
 .detail-price { text-align: right; white-space: nowrap; font-size: 24px; font-weight: 600; }
-.gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.gallery-photo { display: block; position: relative; width: 100%; aspect-ratio: 3 / 2; padding: 0; border: 0; overflow: hidden; background: #ddd; cursor: zoom-in; }
+.viewer-stage { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 3 / 2; max-height: 62vh; overflow: hidden; background: #141714; touch-action: pan-y; }
+.viewer-stage img, .viewer-stage video { grid-area: 1 / 1; display: block; width: 100%; height: 100%; object-fit: contain; background: #141714; }
+.viewer-stage img { cursor: zoom-in; }
+.viewer-stage [hidden] { display: none !important; }
+.viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 1; width: 46px; height: 64px; border: 0; background: rgba(16,19,17,.55); color: white; font-size: 34px; line-height: 1; transition: background .2s; }
+.viewer-nav:hover, .viewer-nav:focus-visible { background: rgba(16,19,17,.88); }
+.viewer-nav:disabled { display: none; }
+.viewer-prev { left: 0; }
+.viewer-next { right: 0; }
+.viewer-counter { position: absolute; right: 12px; bottom: 12px; padding: 6px 10px; background: rgba(16,19,17,.65); color: white; font-size: 11px; letter-spacing: .06em; pointer-events: none; }
+.viewer:has(.gallery-empty:not([hidden])) .viewer-stage { display: none; }
+.gallery-grid { position: relative; display: flex; gap: 8px; margin-top: 8px; padding-bottom: 6px; overflow-x: auto; scrollbar-width: thin; }
+.gallery-photo { display: block; position: relative; flex: 0 0 120px; aspect-ratio: 3 / 2; padding: 0; border: 0; overflow: hidden; background: #ddd; cursor: pointer; opacity: .6; transition: opacity .2s; }
 .gallery-photo[hidden] { display: none !important; }
-.gallery-photo img { display: block; background: #ddd; width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
-.gallery-photo:hover img { transform: scale(1.035); }
-.gallery-photo-zoom { position: absolute; right: 13px; bottom: 13px; display: grid; place-items: center; width: 34px; height: 34px; background: var(--accent); color: var(--ink); font-size: 17px; transform: translateY(4px); opacity: 0; transition: all .2s; }
-.gallery-photo:hover .gallery-photo-zoom, .gallery-photo:focus-visible .gallery-photo-zoom { opacity: 1; transform: translateY(0); }
+.gallery-photo img { display: block; background: #ddd; width: 100%; height: 100%; object-fit: cover; }
+.gallery-photo:hover, .gallery-photo:focus-visible, .gallery-photo.is-active { opacity: 1; }
+.gallery-photo.is-active { outline: 2px solid var(--accent); outline-offset: -2px; }
+.thumb-play { position: absolute; inset: 0; display: grid; place-items: center; color: white; font-size: 20px; background: rgba(16,19,17,.35); pointer-events: none; }
 .gallery-empty { background: linear-gradient(135deg,#d8d9d2,#bfc2b8); display: grid; place-items: center; color: #73786f; min-height: 180px; padding: 24px; text-align: center; }
 .gallery-empty[hidden] { display: none !important; }
 .gallery-lightbox[hidden] { display: none !important; }
@@ -184,8 +195,8 @@ body.lightbox-open { overflow: hidden; }
   .detail-container { padding: 34px 5% 65px; }
   .detail-title-row { display: block; }
   .detail-price { text-align: left; margin-top: 20px; }
-  .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .gallery-photo { aspect-ratio: 3 / 2; }
+  .viewer-stage { max-height: 62vh; }
+  .gallery-photo { flex-basis: 84px; }
   .gallery-empty { min-height: 100px; }
   .gallery-lightbox { grid-template-columns: 42px minmax(0, 1fr) 42px; padding: 54px 6px 22px; }
   .lightbox-nav { width: 36px; height: 54px; font-size: 30px; }
@@ -204,7 +215,7 @@ body.lightbox-open { overflow: hidden; }
 
 /* Touch screens (phones/tablets): full-screen photos are swiped, so drop the side arrows and give the photo the full width. */
 @media (hover: none) and (pointer: coarse) {
-  .lightbox-nav { display: none; }
+  .lightbox-nav, .viewer-nav { display: none; }
   .gallery-lightbox { grid-template-columns: 0 minmax(0, 1fr) 0; padding-left: 0; padding-right: 0; }
 }
 

@@ -31,7 +31,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
   const THUMB_SIZES = [300, 600, 1200];
   const LIGHTBOX_SIZES = [1200, 1920];
   const CARD_SIZES_ATTR = "(max-width: 700px) 100vw, (max-width: 1000px) 50vw, 33vw";
-  const THUMB_SIZES_ATTR = "(max-width: 700px) 50vw, (min-width: 1450px) 460px, 33vw";
+  const THUMB_SIZES_ATTR = "(max-width: 700px) 84px, 120px";
   const LIGHTBOX_SIZES_ATTR = "100vw";
 
   // Gallery convention: Prefix-Main-0600.webp (cover), Prefix-01-0300.webp ... Prefix-01-1920.webp, Prefix-02-..., ...
@@ -263,14 +263,23 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       ["Мощность", car.power || "Not specified"], ["Трансмиссия", car.transmission || "Not specified"]
     ];
     const galleryMarkup = gallery.length ? `
-      <div class="gallery-grid" aria-label="Photographs of ${escapeHTML(title)}">
-        ${gallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="Open ${photo.type === "video" ? "video" : "photo"} ${i + 1}">
+      <div class="viewer">
+      <div class="viewer-stage" id="viewer-stage" tabindex="0" aria-label="Фотографии: ${escapeHTML(title)}">
+        <img id="viewer-image" src="" alt="" decoding="async">
+        <video id="viewer-video" controls playsinline preload="metadata" hidden><source id="viewer-video-source" type="video/mp4"></video>
+        <button class="viewer-nav viewer-prev" type="button" aria-label="Предыдущее фото">‹</button>
+        <button class="viewer-nav viewer-next" type="button" aria-label="Следующее фото">›</button>
+        <div class="viewer-counter" id="viewer-counter"></div>
+      </div>
+      <div class="gallery-grid" aria-label="Миниатюры">
+        ${gallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="${photo.type === "video" ? "Видео" : "Фото"} ${i + 1}">
           ${photo.type === "video"
-            ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} video ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="gallery-photo-zoom" aria-hidden="true">▶</span>`
-            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 3 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async"><span class="gallery-photo-zoom" aria-hidden="true">↗</span>`}
+            ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} video ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="thumb-play" aria-hidden="true">▶</span>`
+            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 8 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async">`}
         </button>`).join("")}
       </div>
       <div class="gallery-empty" hidden>No photographs found. Check the car's image filenames and folder.</div>
+      </div>
       <div class="gallery-lightbox" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Photo gallery" hidden>
         <button class="lightbox-close" type="button" aria-label="Close gallery">×</button>
         <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous photo">‹</button>
@@ -450,16 +459,14 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       $(".lightbox-prev", lightbox).disabled = photos.length < 2;
       $(".lightbox-next", lightbox).disabled = photos.length < 2;
     };
-    const closeLightbox = () => { clearMotion(); swipeBusy = false; lightboxVideo.pause(); lightboxVideoSource.removeAttribute("src"); lightboxVideo.load(); lightbox.hidden = true; document.body.classList.remove("lightbox-open"); };
-    $$(".gallery-photo", root).forEach(button => button.addEventListener("click", () => {
-      const photos = visiblePhotos();
-      const clicked = photos.indexOf(button);
-      if (clicked < 0) return;
+    // Closing the full-screen view leaves the page showing the photo you ended on.
+    const closeLightbox = () => { clearMotion(); swipeBusy = false; lightboxVideo.pause(); lightboxVideoSource.removeAttribute("src"); lightboxVideo.load(); lightbox.hidden = true; document.body.classList.remove("lightbox-open"); selectPhoto(activePhoto); };
+    const openLightbox = index => {
       lightbox.hidden = false;
       document.body.classList.add("lightbox-open");
-      showPhoto(clicked);
+      showPhoto(index);
       $(".lightbox-close", lightbox).focus();
-    }));
+    };
     $(".lightbox-close", lightbox)?.addEventListener("click", closeLightbox);
     $(".lightbox-prev", lightbox)?.addEventListener("click", () => showPhoto(activePhoto - 1, -1));
     $(".lightbox-next", lightbox)?.addEventListener("click", () => showPhoto(activePhoto + 1, 1));
@@ -540,8 +547,100 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     };
     lightbox?.addEventListener("touchend", () => endDrag(false), { passive: true });
     lightbox?.addEventListener("touchcancel", () => endDrag(true), { passive: true });
+
+    // ---- Inline viewer: one large photo, thumbnails below ----
+    const stage = $("#viewer-stage");
+    const viewerImage = $("#viewer-image");
+    const viewerVideo = $("#viewer-video");
+    const viewerVideoSource = $("#viewer-video-source");
+    const viewerCounter = $("#viewer-counter");
+    const thumbStrip = $(".gallery-grid", root);
+    let current = 0;
+    let viewToken = 0;
+    let swipedAt = 0;
+    viewerImage.addEventListener("error", onLightboxError);
+    function selectPhoto(index, direction = 0) {
+      const thumbs = visiblePhotos();
+      if (!thumbs.length) return;
+      current = (index + thumbs.length) % thumbs.length;
+      activePhoto = current; // keeps the full-screen view in step
+      const button = thumbs[current];
+      const isVideo = button.dataset.type === "video";
+      const token = ++viewToken;
+      thumbs.forEach((thumb, i) => {
+        thumb.classList.toggle("is-active", i === current);
+        thumb.setAttribute("aria-current", i === current ? "true" : "false");
+      });
+      // Scroll the thumbnail strip itself (not the page) so the active thumbnail is centred.
+      thumbStrip.scrollTo({ left: button.offsetLeft - (thumbStrip.clientWidth - button.offsetWidth) / 2, behavior: reduceMotion.matches ? "auto" : "smooth" });
+      viewerCounter.textContent = `${current + 1} / ${thumbs.length}`;
+      $$(".viewer-nav", stage).forEach(nav => { nav.disabled = thumbs.length < 2; });
+      viewerVideo.pause();
+      viewerVideo.hidden = !isVideo;
+      viewerImage.hidden = isVideo;
+      if (isVideo) {
+        viewerVideoSource.src = button.querySelector("video source").src;
+        viewerVideo.load();
+        return;
+      }
+      viewerVideoSource.removeAttribute("src");
+      viewerVideo.load();
+      const stem = button.dataset.stem;
+      const alt = button.querySelector("img").alt;
+      if (direction && !reduceMotion.matches && viewerImage.animate) {
+        // Wait for the next photo to decode, then slide it in: no blank flash between photos.
+        preloadLightbox(stem).decode().catch(() => {}).then(() => {
+          if (token !== viewToken) return;
+          assignLightboxSource(viewerImage, stem);
+          viewerImage.alt = alt;
+          viewerImage.animate([{ transform: `translateX(${direction * 6}%)`, opacity: 0 }, { transform: "translateX(0)", opacity: 1 }], { duration: 180, easing: "ease-out" });
+        });
+      } else {
+        assignLightboxSource(viewerImage, stem);
+        viewerImage.alt = alt;
+      }
+      // Warm the cache with the neighbours so arrows and swipes feel instant.
+      [1, -1].forEach(step => {
+        const neighbour = thumbs[(current + step + thumbs.length) % thumbs.length];
+        if (neighbour !== button && neighbour.dataset.stem) preloadLightbox(neighbour.dataset.stem);
+      });
+    }
+    $$(".gallery-photo", root).forEach(button => button.addEventListener("click", () => {
+      const index = visiblePhotos().indexOf(button);
+      if (index >= 0) selectPhoto(index, Math.sign(index - current));
+    }));
+    $(".viewer-prev", stage).addEventListener("click", () => selectPhoto(current - 1, -1));
+    $(".viewer-next", stage).addEventListener("click", () => selectPhoto(current + 1, 1));
+    // Clicking the large photo opens it full screen (ignore the tap that ends a swipe).
+    viewerImage.addEventListener("click", () => { if (performance.now() - swipedAt > 400) openLightbox(current); });
+    // Touch: a horizontal swipe on the large photo goes to the next / previous one.
+    let swipe = null;
+    stage.addEventListener("touchstart", event => {
+      if (event.touches.length !== 1 || event.target.closest("video")) { swipe = null; return; }
+      swipe = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }, { passive: true });
+    stage.addEventListener("touchend", event => {
+      if (!swipe) return;
+      const dx = event.changedTouches[0].clientX - swipe.x;
+      const dy = event.changedTouches[0].clientY - swipe.y;
+      swipe = null;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      swipedAt = performance.now();
+      selectPhoto(current + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    }, { passive: true });
+    selectPhoto(0);
+
     document.addEventListener("keydown", event => {
-      if (!lightbox || lightbox.hidden) return;
+      if (!lightbox || lightbox.hidden) {
+        // Arrow keys also work on the page itself while focus is inside the viewer.
+        const focused = document.activeElement;
+        if (stage.contains(focused) || thumbStrip.contains(focused)) {
+          if (focused.tagName === "VIDEO") return;
+          if (event.key === "ArrowLeft") { event.preventDefault(); selectPhoto(current - 1, -1); }
+          else if (event.key === "ArrowRight") { event.preventDefault(); selectPhoto(current + 1, 1); }
+        }
+        return;
+      }
       if (event.key === "Escape") closeLightbox();
       else if (event.key === "ArrowLeft") showPhoto(activePhoto - 1, -1);
       else if (event.key === "ArrowRight") showPhoto(activePhoto + 1, 1);
