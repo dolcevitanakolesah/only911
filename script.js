@@ -33,6 +33,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     .replace(/\bmanual\b/gi, "механическая")
     .replace(/\bautomatic\b/gi, "автоматическая")
     .replace(/\s+(?:gearbox|transmission)\b/gi, "")
+    .replace(/(автоматическая|механическая)(?:\s+\1)+/gi, "$1")   // "Tiptronic automatic" must not say it twice
     .replace(/^./, ch => ch.toUpperCase());
   const formatPrice = car => car.price_display;
   const formatMileage = car => ruUnits(car.mileage_display).replace(/\b\d{4,}\b/g, n => n.replace(/\B(?=(\d{3})+$)/g, "\u00A0")); // 150000 -> 150 000
