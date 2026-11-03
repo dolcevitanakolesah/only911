@@ -9,7 +9,7 @@ transmission: 6-speed manual
 price: 260,000 €
 
 history:
-First registered on 6 March 1996, the car has covered 141,100 km and had just four owners from new, with the last owner keeping it since 2005. Accompanied by an extensive history file and a significant collection of invoices, it benefited from an engine rebuild in 2010 at 135,000 km and a complete repaint in 2020, with the invoice available.
+First registered on 6 March 1996, the car has covered 142,000 km and had just four owners from new, with the last owner keeping it since 2005. Accompanied by an extensive history file and a significant collection of invoices, it benefited from an engine rebuild in 2010 at 135,000 km and a complete repaint in 2020, with the invoice available.
 
 description:
 Finished in the stunning L39C Midnight Blue Metallic, complemented by a black and grey leather interior, this 1996 Porsche offers a timeless and elegant colour combination. A beautifully understated specification that perfectly captures the spirit of the era.
