@@ -228,7 +228,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       <a class="car-card-link" href="${escapeHTML(carHref(car))}" aria-label="View ${escapeHTML(title)}">
         <div class="car-image-wrap">
           ${img ? `<img class="car-image" data-fallback src="${escapeHTML(img)}" srcset="${escapeHTML(srcsetOf(coverStem, CARD_SIZES))}" sizes="${CARD_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async"><div class="car-image-fallback" hidden>911</div>` : `<div class="car-image-fallback">911</div>`}
-          <span class="card-arrow" aria-hidden="true">↗</span>
+          <span class="card-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" style="display:block"><path d="M6 18 18 6M8.5 6H18v9.5"/></svg></span>
         </div>
         <div class="car-card-meta">
           <div class="card-overline"><span>${escapeHTML(year)}</span><span class="generation">${escapeHTML(car.series || "911")}</span></div>
