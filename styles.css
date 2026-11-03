@@ -229,3 +229,4 @@ html.is-detail body > * { display: none !important; }
 /* Green accent, used deliberately: lime text only on dark backgrounds; on light backgrounds only as fills/lines */
 .hero h1 em, .manifesto h2 em { color: var(--accent); }
 .hero-intro { border-left: 2px solid var(--accent); padding-left: 20px; }
+.empty-state p a { text-decoration: underline; text-underline-offset: 3px; }
