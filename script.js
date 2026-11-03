@@ -35,8 +35,9 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     .replace(/\s+(?:gearbox|transmission)\b/gi, "")
     .replace(/(автоматическая|механическая)(?:\s+\1)+/gi, "$1")   // "Tiptronic automatic" must not say it twice
     .replace(/^./, ch => ch.toUpperCase());
-  const formatPrice = car => car.price_display;
-  const formatMileage = car => ruUnits(car.mileage_display).replace(/\b\d{4,}\b/g, n => n.replace(/\B(?=(\d{3})+$)/g, "\u00A0")); // 150000 -> 150 000
+  const groupDigits = value => String(value).replace(/(\d),(?=\d{3}\b)/g, "$1\u00A0").replace(/\b\d{4,}\b/g, n => n.replace(/\B(?=(\d{3})+$)/g, "\u00A0"));
+  const formatPrice = car => groupDigits(car.price_display);
+  const formatMileage = car => groupDigits(ruUnits(car.mileage_display)); // 150000 -> 150 000
   const formatDescription = value => Array.isArray(value) ? value.filter(Boolean).map(escapeHTML).join("<br><br>") : escapeHTML(value || "");
   const carHref = car => `./index.html?car=${encodeURIComponent(car.id)}`;
   const imagePath = path => path ? `./${String(path).replace(/^\.?\//, "")}` : "";
@@ -125,7 +126,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
   // ---- Car data: one <folder>-00-Card.txt per car + cars.txt (one folder name per line, in display order) ----
   // The card file is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
   const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
-    "history", "description", "imageAlt", "prefix", "vin", "service_book", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
+    "history", "description", "imageAlt", "prefix", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
   const MULTILINE_FIELDS = new Set(["history", "description"]);
   function parseCarText(text, folder) {
     const entry = { folder, prefix: folder };
@@ -312,9 +313,9 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
         <button class="lightbox-nav lightbox-next" type="button" aria-label="Next photo">›</button>
         <div class="lightbox-counter" id="lightbox-counter"></div>
       </div>` : `<div class="gallery-empty">Add photos to this car's folder in assets/</div>`;
-    const hasText = value => (Array.isArray(value) ? value : [value]).some(item => String(item || "").trim());
-    const historyBlock = (hasText(car.history) || car.vin || car.service_book)
-      ? `<div class="history-block">${hasText(car.history) ? `<p>${formatDescription(car.history)}</p>` : ""}${car.vin ? `<p><strong>VIN / chassis:</strong> ${escapeHTML(car.vin)}</p>` : ""}${car.service_book ? `<p><strong>Documentation:</strong> ${escapeHTML(car.service_book)}</p>` : ""}</div>`
+    const hasHistory = safeArray(car.history).some(item => String(item || "").trim());
+    const historyBlock = hasHistory
+      ? `<div class="history-block"><p>${formatDescription(car.history)}</p></div>`
       : "";
     // The history section appears only if there is something to show.
     const historySection = historyBlock
