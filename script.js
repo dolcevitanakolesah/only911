@@ -10,12 +10,8 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
   const escapeHTML = (value = "") => String(value).replace(/[&<>"']/g, ch => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[ch]));
-  const formatPrice = car => {
-    if (car.price_display) return car.price_display;
-    if (typeof car.price === "number") return new Intl.NumberFormat("en-US", { style: "currency", currency: car.currency || "EUR", maximumFractionDigits: 0 }).format(car.price);
-    return "Price on request";
-  };
-  const formatMileage = car => car.mileage_display || (car.mileage_km != null ? `${Number(car.mileage_km).toLocaleString("en-US")} km` : "Not specified");
+  const formatPrice = car => car.price_display;
+  const formatMileage = car => car.mileage_display;
   const formatDescription = value => Array.isArray(value) ? value.filter(Boolean).map(escapeHTML).join("<br><br>") : escapeHTML(value || "");
   const carHref = car => `./index.html?car=${encodeURIComponent(car.id)}`;
   const imagePath = path => path ? `./${String(path).replace(/^\.?\//, "")}` : "";
@@ -156,11 +152,8 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
           id: String(entry.folder || entry.prefix || `car-${index + 1}`),
           series: entry.series || (seriesMatch ? seriesMatch[1] : seriesFromYear(entry.year)),
           year: entry.year || (title.match(/\b(?:19|20)\d{2}\b/) || [])[0] || "",
-          currency: "EUR",
           price_display: price || "Price on request",
           mileage_display: mileage || "Mileage not specified",
-          engine: [entry.displacement, entry.power].filter(Boolean).join(" "),
-          cover: photos[0]?.src || "",
           cover_alt: entry.imageAlt || `${title} exterior`,
           gallery: photos,
           description
@@ -269,10 +262,9 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
       ["Пробег", formatMileage(car)], ["Объём двигателя", car.displacement || "Not specified"],
       ["Мощность", car.power || "Not specified"], ["Трансмиссия", car.transmission || "Not specified"]
     ];
-    const usableGallery = gallery.length ? gallery : safeArray(car.gallery);
-    const galleryMarkup = usableGallery.length ? `
+    const galleryMarkup = gallery.length ? `
       <div class="gallery-grid" aria-label="Photographs of ${escapeHTML(title)}">
-        ${usableGallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="Open ${photo.type === "video" ? "video" : "photo"} ${i + 1}">
+        ${gallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="Open ${photo.type === "video" ? "video" : "photo"} ${i + 1}">
           ${photo.type === "video"
             ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} video ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="gallery-photo-zoom" aria-hidden="true">▶</span>`
             : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 3 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async"><span class="gallery-photo-zoom" aria-hidden="true">↗</span>`}
