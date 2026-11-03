@@ -10,8 +10,25 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
   const escapeHTML = (value = "") => String(value).replace(/[&<>"']/g, ch => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[ch]));
+  // The car card files stay in English; these helpers only change how the numbers and units are *shown* (in Russian).
+  const ruUnits = (value = "") => String(value)
+    .replace(/(\d),(?=\d{3}\b)/g, "$1\u00A0")            // 4,300 -> 4 300 (non-breaking space)
+    .replace(/\b(?:km|kms|kilometers|kilometres)\b/gi, "км")
+    .replace(/\b(?:miles?|mi)\b/gi, "миль")
+    .replace(/\bcc\b/gi, "см³")
+    .replace(/\b(?:hp|bhp|ps)\b/gi, "л.с.")
+    .replace(/\bkw\b/gi, "кВт");
+  const ruTransmission = (value = "") => String(value)
+    .replace(/(\d)[-\s]?speed\s+manual/gi, "$1-ступенчатая механическая")
+    .replace(/(\d)[-\s]?speed\s+(?:automatic|auto|tiptronic)/gi, "$1-ступенчатая автоматическая")
+    .replace(/\bsportomatic\b/gi, "Спортоматик")
+    .replace(/\btiptronic\b/gi, "Типтроник")
+    .replace(/\bmanual\b/gi, "механическая")
+    .replace(/\bautomatic\b/gi, "автоматическая")
+    .replace(/\s+(?:gearbox|transmission)\b/gi, "")
+    .replace(/^./, ch => ch.toUpperCase());
   const formatPrice = car => car.price_display;
-  const formatMileage = car => car.mileage_display;
+  const formatMileage = car => ruUnits(car.mileage_display).replace(/\b\d{4,}\b/g, n => n.replace(/\B(?=(\d{3})+$)/g, "\u00A0")); // 150000 -> 150 000
   const formatDescription = value => Array.isArray(value) ? value.filter(Boolean).map(escapeHTML).join("<br><br>") : escapeHTML(value || "");
   const carHref = car => `./index.html?car=${encodeURIComponent(car.id)}`;
   const imagePath = path => path ? `./${String(path).replace(/^\.?\//, "")}` : "";
@@ -152,8 +169,8 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
           id: String(entry.folder || entry.prefix || `car-${index + 1}`),
           series: entry.series || (seriesMatch ? seriesMatch[1] : seriesFromYear(entry.year)),
           year: entry.year || (title.match(/\b(?:19|20)\d{2}\b/) || [])[0] || "",
-          price_display: price || "Price on request",
-          mileage_display: mileage || "Mileage not specified",
+          price_display: price || "Цена по запросу",
+          mileage_display: mileage || "Пробег не указан",
           cover_alt: entry.imageAlt || `${title} exterior`,
           gallery: photos,
           description
@@ -196,7 +213,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     const coverStem = car.gallery && car.gallery[0] ? car.gallery[0].stem : "";
     const img = coverStem ? imagePath(variant(coverStem, 600)) : "";
     const title = car.title || seriesName(car.series);
-    const year = car.year || "Year not specified";
+    const year = car.year || "Год не указан";
     const alt = car.cover_alt || `${title} exterior`;
     return `<article class="car-card">
       <a class="car-card-link" href="${escapeHTML(carHref(car))}" aria-label="View ${escapeHTML(title)}">
@@ -209,7 +226,7 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
           <h3>${escapeHTML(title)}</h3>
           <div class="card-price-row">
             <span class="card-price">${escapeHTML(formatPrice(car))}</span>
-            <div class="card-specs"><span>${escapeHTML(formatMileage(car))}</span><span class="dot"></span><span>${escapeHTML(car.transmission || "Not specified")}</span></div>
+            <div class="card-specs"><span>${escapeHTML(formatMileage(car))}</span><span class="dot"></span><span>${escapeHTML(car.transmission ? ruTransmission(car.transmission) : "Не указано")}</span></div>
           </div>
         </div>
       </a>
@@ -258,9 +275,9 @@ const CAR_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 550"
     const gallery = safeArray(car.gallery);
     const title = car.title || seriesName(car.series);
     const facts = [
-      ["Год", car.year || "Not specified"], ["Поколение", car.series || "911"],
-      ["Пробег", formatMileage(car)], ["Объём двигателя", car.displacement || "Not specified"],
-      ["Мощность", car.power || "Not specified"], ["Трансмиссия", car.transmission || "Not specified"]
+      ["Год", car.year || "Не указано"], ["Поколение", car.series || "911"],
+      ["Пробег", formatMileage(car)], ["Объём двигателя", car.displacement ? ruUnits(car.displacement) : "Не указано"],
+      ["Мощность", car.power ? ruUnits(car.power) : "Не указано"], ["Трансмиссия", car.transmission ? ruTransmission(car.transmission) : "Не указано"]
     ];
     const galleryMarkup = gallery.length ? `
       <div class="viewer">
