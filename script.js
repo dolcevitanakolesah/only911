@@ -188,7 +188,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     } catch (error) {
       console.error("Unable to load car inventory:", error);
       const grid = $("#car-grid");
-      if (grid) grid.innerHTML = `<div class="load-error"><strong>Collection unavailable.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
+      if (grid) grid.innerHTML = `<div class="load-error"><strong>Коллекция недоступна.</strong><p>${escapeHTML(error.message || "Unable to load the car list.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
       return [];
     }
   }
@@ -304,7 +304,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
             : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 8 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async">`}
         </button>`).join("")}
       </div>
-      <div class="gallery-empty" hidden>No photographs found. Check the car's image filenames and folder.</div>
+      <div class="gallery-empty" hidden>Фотографии не найдены.</div>
       </div>
       <div class="gallery-lightbox" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Photo gallery" hidden>
         <button class="lightbox-close" type="button" aria-label="Close gallery">×</button>
