@@ -112,7 +112,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     }
     for (let number = 1; number <= photoCount; number++) {
       const stem = `${dir}-${label(number)}`;
-      items.push({ type: "photo", src: variant(stem, 600), stem, alt: `${altBase} — photo ${label(number)}` });
+      items.push({ type: "photo", src: variant(stem, 600), stem, alt: `${altBase} — фото ${label(number)}` });
     }
 
     // Videos: "videos:" in the card file gives the count (0 = none, no requests at all).
@@ -130,7 +130,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     for (let number = 1; number <= maxVideos; number++) {
       const src = `assets/${folder}/${prefix}-video-${label(number)}.mp4`;
       if (verify && !(await videoExists(src))) break;
-      items.push({ type: "video", src, stem: src, alt: `${altBase} — video ${label(number)}` });
+      items.push({ type: "video", src, stem: src, alt: `${altBase} — видео ${label(number)}` });
     }
     items.has1920 = await has1920;
     return items;
@@ -176,10 +176,11 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     return entry;
   }
 
+  let loadFailed = false;
   async function loadCars() {
     try {
       const orderResponse = await fetch(ORDER_URL);
-      if (!orderResponse.ok) throw new Error(`Не удалось загрузить cars.txt (${orderResponse.status})`);
+      if (!orderResponse.ok) throw new Error(`Не удалось загрузить список автомобилей (${orderResponse.status}).`);
       const folders = (await orderResponse.text()).split(/\r?\n/).map(line => line.trim().replace(/^\/+|\/+$/g, ""))
         .filter(line => line && !line.startsWith("#"));
       const texts = await Promise.all(folders.map(folder => fetch(`./assets/${folder}/${folder}-00-Card.txt`)
@@ -205,15 +206,16 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
           year: entry.year || (title.match(/\b(?:19|20)\d{2}\b/) || [])[0] || "",
           price_display: price || "Цена по запросу",
           mileage_display: mileage || "Пробег не указан",
-          cover_alt: entry.imageAlt || `${title} exterior`,
+          cover_alt: entry.imageAlt || `${title} — вид снаружи`,
           gallery: photos,
           description
         };
       });
     } catch (error) {
+      loadFailed = true;
       console.error("Unable to load car inventory:", error);
       const grid = $("#car-grid");
-      if (grid) grid.innerHTML = `<div class="load-error"><strong>Коллекция недоступна.</strong><p>${escapeHTML(error.message || "Не удалось загрузить список автомобилей.")} Check that cars.txt is in the repository root and that the site is opened through GitHub Pages or a local web server.</p></div>`;
+      if (grid) grid.innerHTML = `<div class="load-error"><strong>Коллекция недоступна.</strong><p>Не удалось загрузить список автомобилей. Попробуйте обновить страницу чуть позже.</p></div>`;
       return [];
     }
   }
@@ -248,9 +250,9 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     const img = coverStem ? imagePath(variant(coverStem, 600)) : "";
     const title = car.title || seriesName(car.series);
     const year = car.year || "Год не указан";
-    const alt = car.cover_alt || `${title} exterior`;
+    const alt = car.cover_alt || `${title} — вид снаружи`;
     return `<article class="car-card">
-      <a class="car-card-link" href="${escapeHTML(carHref(car))}" aria-label="View ${escapeHTML(title)}">
+      <a class="car-card-link" href="${escapeHTML(carHref(car))}" aria-label="Открыть: ${escapeHTML(title)}">
         <div class="car-image-wrap">
           ${img ? `<img class="car-image" data-fallback src="${escapeHTML(img)}" srcset="${escapeHTML(srcsetOf(coverStem, CARD_SIZES))}" sizes="${CARD_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async"><div class="car-image-fallback" hidden>911</div>` : `<div class="car-image-fallback">911</div>`}
           <span class="card-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" aria-hidden="true" style="display:block"><path d="M6 18 18 6M8.5 6H18v9.5"/></svg></span>
@@ -325,19 +327,19 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       <div class="gallery-grid" aria-label="Миниатюры">
         ${gallery.map((photo, i) => `<button class="gallery-photo${photo.type === "video" ? " gallery-video" : ""}" type="button" data-index="${i}" data-type="${photo.type || "photo"}" data-stem="${photo.type === "video" ? "" : escapeHTML(photo.stem)}" aria-label="${photo.type === "video" ? "Видео" : "Фото"} ${i + 1}">
           ${photo.type === "video"
-            ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} video ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="thumb-play" aria-hidden="true">▶</span>`
-            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} photo ${i + 1}`)}" ${i < 8 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async">`}
+            ? `<video muted playsinline preload="none" data-lazy-video aria-label="${escapeHTML(photo.alt || `${title} — видео ${i + 1}`)}" style="display:block;width:100%;height:100%;object-fit:cover;pointer-events:none"><source src="${escapeHTML(imagePath(photo.src))}" type="video/mp4"></video><span class="thumb-play" aria-hidden="true">▶</span>`
+            : `<img data-fallback src="${escapeHTML(imagePath(variant(photo.stem, 600)))}" srcset="${escapeHTML(srcsetOf(photo.stem, THUMB_SIZES))}" sizes="${THUMB_SIZES_ATTR}" width="${IMG_W}" height="${IMG_H}" alt="${escapeHTML(photo.alt || `${title} — фото ${i + 1}`)}" ${i < 8 ? `loading="eager"${i === 0 ? ' fetchpriority="high"' : ""}` : 'loading="lazy"'} decoding="async">`}
         </button>`).join("")}
       </div>
       <div class="gallery-empty" hidden>Фотографии не найдены.</div>
       </div>
-      <div class="gallery-lightbox" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Photo gallery" hidden>
-        <button class="lightbox-close" type="button" aria-label="Close gallery">×</button>
-        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous photo">‹</button>
+      <div class="gallery-lightbox" id="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Фотогалерея" hidden>
+        <button class="lightbox-close" type="button" aria-label="Закрыть галерею">×</button>
+        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Предыдущее фото">‹</button>
         <figure class="lightbox-figure"><img id="lightbox-image" src="" alt="" decoding="async"><video id="lightbox-video" controls playsinline preload="metadata" hidden style="max-width:100%;max-height:calc(100vh - 130px);width:auto;height:auto;background:#000"><source id="lightbox-video-source" type="video/mp4"></video></figure>
-        <button class="lightbox-nav lightbox-next" type="button" aria-label="Next photo">›</button>
+        <button class="lightbox-nav lightbox-next" type="button" aria-label="Следующее фото">›</button>
         <div class="lightbox-counter" id="lightbox-counter"></div>
-      </div>` : `<div class="gallery-empty">Add photos to this car's folder in assets/</div>`;
+      </div>` : `<div class="gallery-empty">Фотографии скоро появятся.</div>`;
     const hasHistory = safeArray(car.history).some(item => String(item || "").trim());
     const historyBlock = hasHistory
       ? `<div class="history-block"><p>${formatDescription(car.history)}</p></div>`
@@ -347,7 +349,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       ? `<section class="detail-section"><h2>История</h2><div class="history-grid">${historyBlock}</div></section>`
       : "";
     return `<div class="detail-page">
-      <div class="detail-topbar"><a class="wordmark" href="./index.html"><span class="wordmark-mark">911</span><span class="wordmark-car">${carLogo("top")}</span></a><a class="nav-telegram" href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="4 6 16.5 12" width="30" height="22" aria-hidden="true"><path fill="#20231f" d="M16.906 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a></div>
+      <div class="detail-topbar"><a class="wordmark" href="./index.html"><span class="wordmark-mark">911</span><span class="wordmark-car">${carLogo("top")}</span></a><a class="nav-telegram" href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg viewBox="4 6 16.5 12" width="30" height="22" aria-hidden="true"><path fill="#20231f" d="M16.906 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a></div>
       <main class="detail-container">
         <p class="detail-kicker">${escapeHTML(car.year || "")} &nbsp; / &nbsp; ${escapeHTML(seriesName(car.series))}</p>
         <div class="detail-title-row"><h1>${escapeHTML(title)}<span>.</span></h1><div class="detail-price">${escapeHTML(formatPrice(car))}<small class="detail-price-note">Цена автомобиля на месте. Доставку и растаможку рассчитаем отдельно.</small></div></div>
@@ -355,11 +357,11 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
           <div class="detail-gallery">${galleryMarkup}</div>
           <div class="detail-facts">${facts.map(([label,value])=>`<div class="fact"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong></div>`).join("")}</div>
         </div>
-        <section class="detail-overview"><div><h2>Описание</h2><div class="detail-description">${formatDescription(car.description || "A full description for this example will be added shortly.")}</div></div></section>
+        <section class="detail-overview"><div><h2>Описание</h2><div class="detail-description">${formatDescription(car.description || "Полное описание этого автомобиля скоро появится.")}</div></div></section>
         ${historySection}
         <section class="detail-cta"><div><h2><a href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener">Заинтересовал этот 911?</a></h2><p><a href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener">Запросите полное досье автомобиля, дополнительные фотографии или расчёт доставки.</a></p></div></section>
       </main>
-      <footer class="site-footer"><div class="footer-top"><a class="wordmark footer-wordmark" href="./index.html"><span class="wordmark-mark">911</span><span class="wordmark-car">${carLogo("footer")}</span></a><a class="nav-telegram" href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="4 6 16.5 12" width="30" height="22" aria-hidden="true"><path fill="#fff" d="M16.906 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} Только 911</span><span>Персональный скаутинг для тех, кто любит 911.</span></div></footer>
+      <footer class="site-footer"><div class="footer-top"><a class="wordmark footer-wordmark" href="./index.html"><span class="wordmark-mark">911</span><span class="wordmark-car">${carLogo("footer")}</span></a><a class="nav-telegram" href="https://t.me/Anna_Chernyakhovskaya" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg viewBox="4 6 16.5 12" width="30" height="22" aria-hidden="true"><path fill="#fff" d="M16.906 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} Только 911</span><span>Персональный скаутинг для тех, кто любит 911.</span></div></footer>
     </div>`;
   }
 
@@ -368,7 +370,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   async function initDetail(cars, id) {
     const car = cars.find(item => String(item.id) === id);
     if (!car) {
-      root.innerHTML = `<div class="detail-not-found"><p class="eyebrow dark-eyebrow">404 / Car not found</p><h1>This 911 isn't in the collection.</h1><p>It may have been removed or the link may be incorrect.</p><a class="button button-dark" href="./index.html">Return to collection</a></div>`;
+      root.innerHTML = `<div class="detail-not-found"><p class="eyebrow dark-eyebrow">404 / Автомобиль не найден</p><h1>Такого 911 нет в коллекции.</h1><p>Возможно, он снят с продажи или ссылка указана неверно.</p><a class="button button-dark" href="./index.html">Вернуться в коллекцию</a></div>`;
       revealDetail();
       return;
     }
@@ -789,7 +791,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       initDetail(cars, carId);
     } else {
       $("#year") && ($("#year").textContent = new Date().getFullYear());
-      initListing(cars);
+      if (!loadFailed) initListing(cars); // otherwise keep the "collection unavailable" message on screen
     }
   }
   boot();
