@@ -121,7 +121,9 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       try {
         let response = await fetch(src, { method: "HEAD" });
         if (response.status === 405 || response.status === 501) response = await fetch(src, { headers: { Range: "bytes=0-0" } });
-        return response.ok || response.status === 206;
+        // Some hosts answer "200 OK" with a web page for files that do not exist; only a real video file counts.
+        const type = (response.headers.get("content-type") || "").toLowerCase();
+        return (response.ok || response.status === 206) && !type.startsWith("text/") && !type.includes("html");
       } catch (_) { return false; }
     };
     const declaredVideos = parseInt(car.videos, 10);
@@ -381,6 +383,13 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     // Videos: fetch metadata (first frame) only when a tile is about to scroll into view.
     const videos = $$("video[data-lazy-video]", root);
     if (videos.length) {
+      const dropIfBroken = video => {
+        const source = video.querySelector("source");
+        const tile = video.closest(".gallery-photo");
+        if (!source || !tile) return;
+        source.addEventListener("error", () => { tile.hidden = true; selectPhoto(current); }, { once: true });
+      };
+      videos.forEach(dropIfBroken);
       const wake = video => { video.preload = "metadata"; video.load(); };
       if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver(entries => entries.forEach(entry => {
