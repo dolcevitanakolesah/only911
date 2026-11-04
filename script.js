@@ -135,7 +135,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       } catch (_) { return false; }
     };
     const declaredVideos = parseInt(car.videos, 10);
-    const maxVideos = Number.isFinite(declaredVideos) && declaredVideos >= 0 ? declaredVideos : 5;
+    const maxVideos = Number.isFinite(declaredVideos) && declaredVideos >= 0 ? declaredVideos : 2; // at most 2 videos per car
     const verify = !(Number.isFinite(declaredVideos) && declaredVideos >= 0);
     for (let number = 1; number <= maxVideos; number++) {
       const src = `assets/${folder}/${prefix}-video-${label(number)}.mp4`;
