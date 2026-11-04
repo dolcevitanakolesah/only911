@@ -117,13 +117,21 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
 
     // Videos: "videos:" in the card file gives the count (0 = none, no requests at all).
     // Without it, look for video-01, video-02, ... one after another and stop at the first missing file (one failed request at most).
+    // A video "exists" only if the first bytes of the file look like an MP4 (the signature "ftyp" at byte 4).
+    // This does not depend on the host's status codes or content types: hosts that answer "200 OK" with a web page
+    // for missing files are not fooled. Only the first few bytes are read, never the whole video.
     const videoExists = async src => {
       try {
-        let response = await fetch(src, { method: "HEAD" });
-        if (response.status === 405 || response.status === 501) response = await fetch(src, { headers: { Range: "bytes=0-0" } });
-        // Some hosts answer "200 OK" with a web page for files that do not exist; only a real video file counts.
-        const type = (response.headers.get("content-type") || "").toLowerCase();
-        return (response.ok || response.status === 206) && !type.startsWith("text/") && !type.includes("html");
+        const response = await fetch(src, { headers: { Range: "bytes=0-31" } });
+        if (!(response.ok || response.status === 206)) return false;
+        let bytes;
+        if (response.body && response.body.getReader) {
+          const reader = response.body.getReader();
+          const { value } = await reader.read();
+          reader.cancel().catch(() => {});
+          bytes = value || new Uint8Array(0);
+        } else bytes = new Uint8Array(await response.arrayBuffer()).slice(0, 32);
+        return bytes.length >= 8 && String.fromCharCode(bytes[4], bytes[5], bytes[6], bytes[7]) === "ftyp";
       } catch (_) { return false; }
     };
     const declaredVideos = parseInt(car.videos, 10);
