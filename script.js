@@ -58,7 +58,18 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   const LIGHTBOX_SIZES = [1200, 1920];
   const CARD_SIZES_ATTR = "(max-width: 700px) 100vw, (max-width: 1000px) 50vw, 33vw";
   const THUMB_SIZES_ATTR = "(max-width: 700px) 84px, 120px";
-  const LIGHTBOX_SIZES_ATTR = "100vw";
+  // 1920px photos are a bonus: used only when the photo is shown big enough to benefit AND the connection is good.
+  // Otherwise the 1200px file is used. (Browsers without the Network Information API, e.g. Safari, count as "good".)
+  const LARGE_MIN_PX = 1300;   // physical pixels of displayed width above which 1200px starts to look soft
+  const goodConnection = () => {
+    const c = navigator.connection;
+    if (!c) return true;
+    if (c.saveData) return false;
+    if (c.effectiveType && c.effectiveType !== "4g") return false;
+    if (c.downlink && c.downlink < 5) return false; // Mbit/s
+    return true;
+  };
+  const wantLarge = cssWidth => cssWidth * (window.devicePixelRatio || 1) > LARGE_MIN_PX && goodConnection();
 
   // Gallery convention: Prefix-Main-0600.webp (cover), Prefix-01-0300.webp ... Prefix-01-1920.webp, Prefix-02-..., ...
   // Listing cards use the main image; the detail view discovers only photos that exist.
@@ -86,28 +97,42 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     const altBase = car.imageAlt || car.title || "Porsche 911";
     const label = n => String(n).padStart(2, "0");
     const items = [];
+    // 1920px versions are optional. Ask once per car (a header-only request for the first photo's 1920 file) whether they exist.
+    const has1920 = fetch(imagePath(variant(`${dir}-01`, 1920)), { method: "HEAD" }).then(r => r.ok).catch(() => false);
 
-    // Photos: probe 50 tiny thumbnails IN PARALLEL (one round trip, not one per photo) and keep the first unbroken run.
-    // Add or delete photos in the folder and the gallery updates itself; nothing to edit in the card file.
-    const hits = await Promise.all(Array.from({ length: 50 }, (_, i) => probeThumb(`${dir}-${label(i + 1)}`)));
-    const photoCount = hits.indexOf(false) === -1 ? hits.length : hits.indexOf(false);
+    // Photos are found automatically: check the tiny thumbnails 4 at a time and stop at the first batch that has a gap.
+    // Nothing to configure: add or delete photos in the folder and the gallery follows. (At most 3 failed requests per car.)
+    const BATCH = 4;
+    let photoCount = 0;
+    for (let start = 1; start <= 50; start += BATCH) {
+      const hits = await Promise.all(Array.from({ length: BATCH }, (_, i) => probeThumb(`${dir}-${label(start + i)}`)));
+      const miss = hits.indexOf(false);
+      if (miss !== -1) { photoCount = start - 1 + miss; break; }
+      photoCount = start - 1 + BATCH;
+    }
     for (let number = 1; number <= photoCount; number++) {
       const stem = `${dir}-${label(number)}`;
       items.push({ type: "photo", src: variant(stem, 600), stem, alt: `${altBase} — photo ${label(number)}` });
     }
 
-    // Videos: check up to 5 filenames in parallel; missing ones are simply skipped.
-    const videoChecks = await Promise.all(Array.from({ length: 5 }, async (_, index) => {
-      const number = index + 1;
-      const src = `assets/${folder}/${prefix}-video-${label(number)}.mp4`;
+    // Videos: "videos:" in the card file gives the count (0 = none, no requests at all).
+    // Without it, look for video-01, video-02, ... one after another and stop at the first missing file (one failed request at most).
+    const videoExists = async src => {
       try {
         let response = await fetch(src, { method: "HEAD" });
         if (response.status === 405 || response.status === 501) response = await fetch(src, { headers: { Range: "bytes=0-0" } });
-        if (response.ok || response.status === 206) return { number, item: { type: "video", src, stem: src, alt: `${altBase} — video ${label(number)}` } };
-      } catch (_) { /* a missing video must not block the others */ }
-      return null;
-    }));
-    for (const result of videoChecks.filter(Boolean).sort((x, y) => x.number - y.number)) items.push(result.item);
+        return response.ok || response.status === 206;
+      } catch (_) { return false; }
+    };
+    const declaredVideos = parseInt(car.videos, 10);
+    const maxVideos = Number.isFinite(declaredVideos) && declaredVideos >= 0 ? declaredVideos : 5;
+    const verify = !(Number.isFinite(declaredVideos) && declaredVideos >= 0);
+    for (let number = 1; number <= maxVideos; number++) {
+      const src = `assets/${folder}/${prefix}-video-${label(number)}.mp4`;
+      if (verify && !(await videoExists(src))) break;
+      items.push({ type: "video", src, stem: src, alt: `${altBase} — video ${label(number)}` });
+    }
+    items.has1920 = await has1920;
     return items;
   }
 
@@ -126,7 +151,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   // ---- Car data: one <folder>-00-Card.txt per car + cars.txt (one folder name per line, in display order) ----
   // The card file is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
   const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
-    "history", "description", "imageAlt", "prefix", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
+    "history", "description", "imageAlt", "prefix", "color", "stock_number", "videos"].map(name => [name.toLowerCase(), name]));
   const MULTILINE_FIELDS = new Set(["history", "description"]);
   function parseCarText(text, folder) {
     const entry = { folder, prefix: folder };
@@ -396,6 +421,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
     // Some cars have no 1920 file. If the 1920 candidate fails to load, remember that for this photo and
     // fall back to the 1200 file (works for the main image, the neighbour preview and the preloads).
     const without1920 = new Set();
+    const carHas1920 = car.gallery.has1920 !== false; // no 1920 files for this car: use the 1200 file straight away
     const onLightboxError = event => {
       const el = event.target;
       const stem = el.dataset.stem;
@@ -404,17 +430,19 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       el.removeAttribute("srcset");
       el.src = imagePath(variant(stem, 1200));
     };
-    const assignLightboxSource = (el, stem) => {
+    const fullscreenWidth = () => Math.min(window.innerWidth, (window.innerHeight - 130) * 1.5); // 3:2 photo, limited by screen height
+    const inlineWidth = () => Math.min(stage.clientWidth || window.innerWidth, (stage.clientHeight || window.innerHeight) * 1.5);
+    const assignLightboxSource = (el, stem, cssWidth = fullscreenWidth()) => {
       el.dataset.stem = stem;
-      el.sizes = LIGHTBOX_SIZES_ATTR;
-      if (without1920.has(stem)) el.removeAttribute("srcset");
-      else el.srcset = srcsetOf(stem, LIGHTBOX_SIZES); // browser picks 1200 or 1920 for this screen
+      el.sizes = `${Math.max(1, Math.round(cssWidth))}px`;
+      if (!carHas1920 || without1920.has(stem) || !wantLarge(cssWidth)) el.removeAttribute("srcset"); // 1200 only
+      else el.srcset = srcsetOf(stem, LIGHTBOX_SIZES); // big display + good connection: browser may take the 1920 file
       el.src = imagePath(variant(stem, 1200));
     };
-    const preloadLightbox = stem => {
+    const preloadLightbox = (stem, cssWidth) => {
       const warm = new Image();
       warm.addEventListener("error", onLightboxError);
-      assignLightboxSource(warm, stem);
+      assignLightboxSource(warm, stem, cssWidth);
       return warm;
     };
     lightboxImage.addEventListener("error", onLightboxError);
@@ -616,20 +644,20 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       const alt = button.querySelector("img").alt;
       if (direction && !reduceMotion.matches && viewerImage.animate) {
         // Wait for the next photo to decode, then slide it in: no blank flash between photos.
-        preloadLightbox(stem).decode().catch(() => {}).then(() => {
+        preloadLightbox(stem, inlineWidth()).decode().catch(() => {}).then(() => {
           if (token !== viewToken) return;
-          assignLightboxSource(viewerImage, stem);
+          assignLightboxSource(viewerImage, stem, inlineWidth());
           viewerImage.alt = alt;
           viewerImage.animate([{ transform: `translateX(${direction * 6}%)`, opacity: 0 }, { transform: "translateX(0)", opacity: 1 }], { duration: 180, easing: "ease-out" });
         });
       } else {
-        assignLightboxSource(viewerImage, stem);
+        assignLightboxSource(viewerImage, stem, inlineWidth());
         viewerImage.alt = alt;
       }
       // Warm the cache with the neighbours so arrows and swipes feel instant.
       [1, -1].forEach(step => {
         const neighbour = thumbs[(current + step + thumbs.length) % thumbs.length];
-        if (neighbour !== button && neighbour.dataset.stem) preloadLightbox(neighbour.dataset.stem);
+        if (neighbour !== button && neighbour.dataset.stem) preloadLightbox(neighbour.dataset.stem, inlineWidth());
       });
     }
     $$(".gallery-photo", root).forEach(button => button.addEventListener("click", () => {
