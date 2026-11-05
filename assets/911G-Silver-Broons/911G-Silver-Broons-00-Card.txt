@@ -1,4 +1,4 @@
-title: Модель G под прикрытием 964: 1981 SC Targa
+title: 911-G под прикрытием 964: 1981 SC Targa
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
