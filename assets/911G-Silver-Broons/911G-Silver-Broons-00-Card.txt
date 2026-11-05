@@ -1,4 +1,4 @@
-title: Porsche 911 SC Targa 3.0 - Look 964
+title: Модель G под прикрытием 964: 1981 SC Targa
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
