@@ -1,4 +1,4 @@
-title: Porsche 911 SC Targa
+title: Красный навсегда: 1981 Porsche SC Targa
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
