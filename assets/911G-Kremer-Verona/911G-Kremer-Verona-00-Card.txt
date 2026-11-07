@@ -1,4 +1,4 @@
-title: Porsche 911 SC 3.0 KREMER
+title: Характер другой эпохи: 1981 Porsche 911 SC 3.0 Kremer
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
@@ -8,9 +8,9 @@ power: 204 HP
 transmission: 5-speed manual
 price: 105,000 €
  
-history: On 31 August 1981, the car underwent a period conversion with the installation of the Kremer “Turbo-Umba” kit, carried out by Bauteil coachbuilders in Salzburg, Austria. This documented modification represents a defining chapter in the car’s history, reflecting the customisation culture surrounding Porsche in the early 1980s and giving this 911 its distinctive identity. 
+history: 31 августа 1981 года автомобиль прошёл тюнинг той эпохи — установку комплекта Kremer «Turbo-Umba», выполненную кузовным ателье Bauteil в Зальцбурге (Австрия). Эта задокументированная модификация - определяющая глава в истории машины, отражающая культуру кастомизации, окружавшую Porsche в ранние 80-е, и подарившая этому 911 его неповторимую индивидуальность.
  
 description:
-An exceptional 1981 Porsche 911 SC 3.0, showing just 1,120 km on the odometer. The car retains its original engine and gearbox and features the distinctive Kremer “Turbo-Umba” body kit, complemented by modified wheels and rims fitted with spacers. Its unmistakable period styling gives it a unique presence while capturing the spirit of the early 1980s Porsche era. 
+Исключительный Porsche 911 SC 3.0 1981 года, на одометре которого всего 1 120 км. Автомобиль сохранил оригинальные двигатель и коробку передач, а его визитная карточка — узнаваемый аэродинамический обвес Kremer «Turbo-Umba», дополненный модифицированными колёсами и дисками с проставками. Неповторимый стиль той эпохи придаёт ему уникальную харизму и точно передаёт дух Porsche ранних 80-х.
  
-The interior has been completely reupholstered, featuring modified fabrics and trim that give the cabin a distinctive character. Mechanically, the car has undergone a comprehensive overhaul, with all work documented and supported by the relevant invoice. It is accompanied by the prestigious ASI Targa Oro certification and is currently part of the collection of a dedicated Porsche enthusiast who owns more than 50 Porsche automobiles. 
+Салон полностью перетянут заново: изменённые ткани и отделка придают салону особый характер. По части механики автомобиль прошёл комплексный капитальный ремонт, все работы задокументированы и подтверждены счетами. Прилагается престижная сертификация ASI Targa Oro. Сейчас машина входит в коллекцию преданного энтузиаста Porsche, владеющего более чем 50 автомобилями марки.
