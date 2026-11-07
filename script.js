@@ -39,7 +39,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   const formatPrice = car => groupDigits(car.price_display);
   const formatMileage = car => groupDigits(ruUnits(car.mileage_display)); // 150000 -> 150 000
   const formatDescription = value => Array.isArray(value) ? value.filter(Boolean).map(escapeHTML).join("<br><br>") : escapeHTML(value || "");
-  const carHref = car => `./index.html?car=${encodeURIComponent(car.id)}`;
+  const carHref = car => `./car/${encodeURIComponent(car.id)}.html`;
   const imagePath = path => path ? `./${String(path).replace(/^\.?\//, "")}` : "";
   const safeArray = value => Array.isArray(value) ? value : [];
 
@@ -800,7 +800,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
 
   async function boot() {
     const params = new URLSearchParams(window.location.search);
-    const carId = params.get("car");
+    const carId = params.get("car") || window.CAR_ID || null;
     if (!carId) { initQuotes(); initHeroSlideshow(); }
     const cars = await loadCars();
     if (carId) {
