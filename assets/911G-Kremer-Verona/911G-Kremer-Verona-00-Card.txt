@@ -2,7 +2,7 @@ title: Характер другой эпохи: 1981 SC Kremer
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
-mileage: 1,120 Km
+mileage: 1,120 km
 displacement: 2994 cc
 power: 204 HP
 transmission: 5-speed manual
