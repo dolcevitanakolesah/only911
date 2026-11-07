@@ -2,7 +2,7 @@ title: Итальянская душа: 1981 SC 3.0
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
-mileage: 94,000 Km
+mileage: 94,000 km
 displacement: 2994 cc
 power: 204 HP
 transmission: 5-speed manual
