@@ -2,7 +2,7 @@ title: Первый из легенд: 1974 Carrera 2.7
 imageAlt: Porsche 911
 series: 911-G
 year: 1974
-mileage: 69,800 Km
+mileage: 69,800 km
 displacement: 2687 cc
 power: 210 HP
 transmission: 5-speed manual
