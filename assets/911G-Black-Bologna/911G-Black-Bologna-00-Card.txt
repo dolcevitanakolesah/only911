@@ -2,7 +2,7 @@ title: Икона открытого верха: 1989 Speedster 3.2
 imageAlt: Porsche 911
 series: 911-G
 year: 1989
-mileage: 58,000 Km
+mileage: 58,000 km
 displacement: 3164 cc
 power: 217 HP
 transmission: 5-speed manual
