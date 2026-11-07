@@ -2,7 +2,7 @@ title: Лето 69-го: Porsche 911 2.0 E
 imageAlt: Porsche 911
 series: 911-F
 year: 1969
-mileage: 16,000 Km
+mileage: 16,000 km
 displacement: 1991 cc
 power: 140 HP
 transmission: 5-speed manual
