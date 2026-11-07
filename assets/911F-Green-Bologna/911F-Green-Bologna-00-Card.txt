@@ -1,4 +1,4 @@
-title: The Summer of '69: Porsche 911 2.0 E
+title: Лето 69-го: Porsche 911 2.0 E
 imageAlt: Porsche 911
 series: 911-F
 year: 1969
