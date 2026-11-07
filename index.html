@@ -26,14 +26,14 @@
   <!-- Fonts: fewer weights, and loaded without blocking first paint (system fonts show until they arrive). -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap"></noscript>
-  <link rel="stylesheet" href="./styles.css?v=20261104">
+  <link rel="stylesheet" href="./styles.css?v=20261107">
   <!-- Start the two things the page depends on as early as possible -->
   <script>
     /* Car pages are index.html?car=...  Hide the home-page markup until the car page is drawn (no flash of the hero),
        and only preload the hero image / quotes on the home page. */
     (function () {
       var root = document.documentElement;
-      if (/[?&]car=/.test(location.search)) {
+      if (/[?&]car=/.test(location.search) || window.CAR_ID) {
         root.classList.add("is-detail");
         setTimeout(function () { root.classList.remove("is-detail"); }, 6000); /* safety net */
       } else {
@@ -49,7 +49,7 @@
     })();
   </script>
   <link rel="preload" as="fetch" href="./cars.txt" crossorigin="anonymous">
-  <script src="./script.js?v=20261104" defer></script>
+  <script src="./script.js?v=20261107" defer></script>
 </head>
 <body>
   <header class="site-header">
