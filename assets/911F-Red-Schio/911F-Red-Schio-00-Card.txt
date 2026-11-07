@@ -2,7 +2,7 @@ title: Двадцать лет в укрытии: 1970 Porsche S 2.2
 imageAlt: Porsche 911
 series: 911-F
 year: 1970
-mileage: 25,000 Km
+mileage: 25,000 km
 displacement: 2195 cc
 power: 180 HP
 transmission: 5-speed manual
