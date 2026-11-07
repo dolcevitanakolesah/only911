@@ -2,7 +2,7 @@ title: Timeless Elegance: 1991 Carrera 2 Cabriolet
 imageAlt: Porsche 964
 series: 964
 year: 1991
-mileage: 167,000 Km
+mileage: 167,000 km
 displacement: 3600 cc
 power: 250 HP
 transmission: 4-speed Tiptronic automatic
