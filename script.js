@@ -115,8 +115,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
       items.push({ type: "photo", src: variant(stem, 600), stem, alt: `${altBase} — фото ${label(number)}` });
     }
 
-    // Videos: "videos:" in the card file gives the count (0 = none, no requests at all).
-    // Without it, look for video-01, video-02, ... one after another and stop at the first missing file (one failed request at most).
+    // Videos: look for video-01, video-02 one after another and stop at the first missing file (one failed request at most).
     // A video "exists" only if the first bytes of the file look like an MP4 (the signature "ftyp" at byte 4).
     // This does not depend on the host's status codes or content types: hosts that answer "200 OK" with a web page
     // for missing files are not fooled. Only the first few bytes are read, never the whole video.
@@ -134,12 +133,10 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
         return bytes.length >= 8 && String.fromCharCode(bytes[4], bytes[5], bytes[6], bytes[7]) === "ftyp";
       } catch (_) { return false; }
     };
-    const declaredVideos = parseInt(car.videos, 10);
-    const maxVideos = Number.isFinite(declaredVideos) && declaredVideos >= 0 ? declaredVideos : 2; // at most 2 videos per car
-    const verify = !(Number.isFinite(declaredVideos) && declaredVideos >= 0);
+    const maxVideos = 2; // at most 2 videos per car
     for (let number = 1; number <= maxVideos; number++) {
       const src = `assets/${folder}/${prefix}-video-${label(number)}.mp4`;
-      if (verify && !(await videoExists(src))) break;
+      if (!(await videoExists(src))) break;
       items.push({ type: "video", src, stem: src, alt: `${altBase} — видео ${label(number)}` });
     }
     items.has1920 = await has1920;
@@ -161,7 +158,7 @@ const carLogo = where => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1
   // ---- Car data: one <folder>-00-Card.txt per car + cars.txt (one folder name per line, in display order) ----
   // The card file is plain "field: value" lines. description / history may span several lines; a blank line starts a new paragraph.
   const CAR_FIELDS = Object.fromEntries(["title", "series", "year", "mileage", "displacement", "power", "transmission", "price",
-    "history", "description", "imageAlt", "prefix", "color", "stock_number", "videos"].map(name => [name.toLowerCase(), name]));
+    "history", "description", "imageAlt", "prefix", "color", "stock_number"].map(name => [name.toLowerCase(), name]));
   const MULTILINE_FIELDS = new Set(["history", "description"]);
   function parseCarText(text, folder) {
     const entry = { folder, prefix: folder };
