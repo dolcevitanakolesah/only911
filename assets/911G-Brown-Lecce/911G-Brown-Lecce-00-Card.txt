@@ -1,4 +1,4 @@
-title: Porsche 911 SC
+title: Итальянская душа: 1981 SC 3.0
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
