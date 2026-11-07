@@ -2,7 +2,7 @@ title: Медный бриллиант: 1981 930 Turbo 3.3
 imageAlt: Porsche 911
 series: 911-G
 year: 1981
-mileage: 94,000 Km
+mileage: 94,000 km
 displacement: 3299 cc
 power: 300 HP
 transmission: 4-speed manual
