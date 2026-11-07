@@ -2,7 +2,7 @@ title: На исходе эпохи: 1994 Porsche 993
 imageAlt: Porsche 993
 series: 993
 year: 1994
-mileage: 142,000 Km
+mileage: 142,000 km
 displacement: 3600 cc
 power: 272 HP
 transmission: 6-speed manual
