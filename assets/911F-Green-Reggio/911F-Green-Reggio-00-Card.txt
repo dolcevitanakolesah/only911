@@ -2,7 +2,7 @@ title: Вечнозелёный: 1973 Porsche 911 Targa
 imageAlt: Porsche 911
 series: 911-F
 year: 1973
-mileage: 4,300 Km
+mileage: 4,300 km
 displacement: 2341 cc
 power: 190 HP
 transmission: 5-speed manual
