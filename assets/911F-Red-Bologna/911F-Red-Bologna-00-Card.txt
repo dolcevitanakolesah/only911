@@ -2,7 +2,7 @@ title: Рождение иконы: 1966 Porsche 911
 imageAlt: Porsche 911
 series: 911-F
 year: 1966
-mileage: 9,800 Km
+mileage: 9,800 km
 displacement: 1991 cc
 power: 130 HP
 transmission: 5-speed manual
