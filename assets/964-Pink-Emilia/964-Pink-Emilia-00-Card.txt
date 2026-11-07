@@ -2,7 +2,7 @@ title: Жизнь в розовом цвете: 1991 Porsche 964
 imageAlt: Porsche 964
 series: 964
 year: 1991
-mileage: 199,000 Km
+mileage: 199,000 km
 displacement: 3600 cc
 power: 250 HP
 transmission: 4-speed Tiptronic automatic
