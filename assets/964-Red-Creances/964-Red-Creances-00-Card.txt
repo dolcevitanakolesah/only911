@@ -2,7 +2,7 @@ title: 1991 Porsche 964 Cabriolet Tiptronic
 imageAlt: Porsche 964
 series: 964
 year: 1991
-mileage: 255,000 Km
+mileage: 255,000 km
 displacement: 3600 cc
 power: 247 HP
 transmission: 4-speed Tiptronic automatic
