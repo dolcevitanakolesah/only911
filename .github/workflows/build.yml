@@ -1,1 +1,55 @@
+# Rebuilds the car pages and Open Graph URLs with build.py and commits the result.
+# Runs when you change cars.txt, a card file, index.html or build.py.
+# You can also run it by hand: Actions tab > "Build car pages" > Run workflow
+# (leave the box empty to use BASE_URL from build.py, or type another address to test).
+name: Build car pages
 
+on:
+  push:
+    paths:
+      - "cars.txt"
+      - "assets/**/*-00-Card.txt"
+      - "index.html"
+      - "build.py"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Site address to write into the pages (empty = BASE_URL in build.py)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-car-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build pages
+        env:
+          BASE_URL_INPUT: ${{ inputs.base_url }}
+        run: |
+          if [ -n "$BASE_URL_INPUT" ]; then
+            python3 build.py "$BASE_URL_INPUT"
+          else
+            python3 build.py
+          fi
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git commit -m "Build car pages"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
